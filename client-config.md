@@ -37,3 +37,10 @@ Mode: Automated (Claude Code)
 - Voice: warm but practical and no-nonsense (D). Faceless brand; story told as "the founder", never named.
 - Background (usable anonymously): mom of 5; teen mom, no college degree; 4+ years in online business; worked inside ops teams of several well-known multimillion-dollar online companies fixing/streamlining client experience and client success; helped 1000+ business owners build businesses; started as a $19/hr work-from-home healthcare insurance-authorization job that was micromanaged (a "ding" if idle 5 min); took an Airbnb course, built her own Airbnb, was offered a CSM role, built client experience/success for that company and a second offer; now earns more than she thought possible.
 - Private (do NOT put in public copy unless owner says so): earlier difficult marriage with no financial access, which started her love of side hustles.
+
+## Product 1 (in build)
+- Name: Scrolling to Selling (confirmed)
+- Correction: owner is currently Director of Operations at a multimillion-dollar online company (not only past roles); ran client success for online offers.
+- One-liner: Helps moms stuck in a 9-5 go from scrolling their phone to earning first online income with content and affiliate marketing, without showing their face.
+- Price: ~$37 (test $27-47)
+- Kit vision (Product #2/core): user "brain dumps" background and knowledge, and the tool helps repackage it into an offer OR create their own digital products. Must be easier to set up than the kit the owner bought.
