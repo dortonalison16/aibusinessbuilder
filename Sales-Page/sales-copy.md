@@ -1,7 +1,7 @@
 # Sales Page Copy: Scrolling to Selling ($37)
 
 Brand: Grit & Bloom (faceless). Voice: warm, practical, no-nonsense.
-Guarantee used: 7-day money-back (owner can change). Buy button link: to be added (Systeme.io checkout).
+Guarantee used: 7-day money-back, no questions asked (owner chose to clarify). Buy button link: to be added (Systeme.io checkout).
 
 ## Headline options (pick one)
 1. **Turn What You Already Know Into Your First Digital Product** (used on the page)
@@ -56,7 +56,7 @@ The founder of Grit & Bloom started in a work-from-home job at $19 an hour where
 
 ## Price + guarantee
 **$37**, one-time. Instant access.
-**7-day guarantee:** Read it and try the first two chapters. If it isn't for you, email us within 7 days and we'll refund you. No hassle.
+**7-day money-back guarantee:** If Scrolling to Selling isn't what you hoped for, email us within 7 days of purchase and we'll refund you. No questions asked.
 
 ## FAQ
 **Do I need a following or an audience?** No. The guide shows you how to start from zero, and you don't need to be on camera.
