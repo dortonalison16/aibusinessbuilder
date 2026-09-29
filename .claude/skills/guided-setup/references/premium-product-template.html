@@ -6,6 +6,9 @@
   1) BRAND TOKENS (:root) — from the buyer's palette (Section 7):
        --brand (primary) · --brand-deep (darkest ink: cover panel + headings) · --accent (pop) ·
        --tint (soft brand tint for callouts) · --tint-2 (soft accent tint for warnings)
+     Every other color in the CSS (text greys, borders, shadows, the cover stripe and overlays) is
+     DERIVED from these five with color-mix(), so swapping the five re-colors the whole PDF.
+     Never hard-code a hex value elsewhere in the CSS.
 
   2) FONTS — set --display (headings) + --sans (body) + the @import to match their "font feeling":
        elegant/premium → Fraunces + Inter [default] · modern → Sora/Space Grotesk + Inter ·
@@ -19,17 +22,20 @@
      and reference them RELATIVELY (embed, never hot-link a URL in the final PDF):
        • THE COVER is a BOLD, magazine/cookbook-style cover: a bright, appetizing, on-topic HERO
          PHOTO fills the top ~2/3 (`.cover-photo` background = `images/cover.jpg`) under a small
-         masthead, then a deep brand-ink panel holds the big title (with a turquoise→accent stripe).
+         masthead, then a deep brand-ink panel holds the big title (with a brand→accent stripe).
          Pick a striking, high-quality cover photo — this is the buyer's "book cover," make it POP.
        • `.chapter-banner` → one wide banner per chapter (`images/chapter-1.jpg`, ...).
        • `figure.fig` → inline image + caption (`images/figure-1.jpg`, ...). `.imrow` → a two-up row.
      SOURCING: Auto-Pilot pulls relevant FREE stock (Pexels/Unsplash by keyword) or uses images the
-       buyer dropped in `Product/images/`, and embeds them. Co-Pilot places the slots and hands the
-       buyer the exact stock-search terms / AI-image prompts (Canva/OpenArt) to fill each.
+       buyer dropped in `Product/images/`, and embeds them. Co-Pilot uses the owner's own images or
+       ones made/exported through the Canva connector; a slot with no image yet is REMOVED (never
+       shipped empty), and the buyer gets the exact stock-search terms / AI-image prompts
+       (Canva/OpenArt) to add later. The cover falls back to a brand gradient if cover.jpg is missing.
      Keep every image on-topic + on-brand — a meal-prep guide gets food/kitchen photos, etc.
-     NEVER leave an empty grey box or a broken image.
+     NEVER leave an empty gray box or a broken image.
 
-  5) RENDER — HTML → PDF via headless Chrome (Puppeteer), A4, printBackground:true. **Load the page
+  5) RENDER — HTML → PDF via headless Chrome (Puppeteer), US Letter (8.5×11 in; the @page rule sets it —
+     pass preferCSSPageSize:true or format:'Letter'), printBackground:true. **Load the page
      with `page.goto('file://<path>')` (NOT setContent) so local `images/` files resolve.** Never pdfkit.
 -->
 <!doctype html><html><head><meta charset="utf-8">
@@ -39,42 +45,56 @@
 /* ===== BRAND TOKENS (the only thing that changes per buyer) ===== */
 :root{
   --brand:#00C2D1; --brand-deep:#0B2A33; --accent:#FF9F1C; --tint:#E9FBFC; --tint-2:#FFF6E9;
-  --paper:#ffffff; --body:#2B3A40; --muted:#6E8189; --line:#E3ECEE;
+  --paper:#ffffff;
+  /* derived from the five tokens above — no need to touch these */
+  --body:color-mix(in srgb, var(--brand-deep) 80%, #808080);
+  --muted:color-mix(in srgb, var(--brand-deep) 40%, #b0b0b0);
+  --line:color-mix(in srgb, var(--brand-deep) 8%, #f3f5f5);
+  --ink-soft:color-mix(in srgb, var(--brand-deep) 85%, #ffffff);          /* callout text */
+  --on-deep:color-mix(in srgb, var(--brand) 16%, color-mix(in srgb, var(--brand-deep) 10%, #ffffff)); /* light text on the cover panel */
+  --on-deep-muted:color-mix(in srgb, var(--brand) 20%, color-mix(in srgb, var(--brand-deep) 40%, #ffffff));
+  --brand-light:color-mix(in srgb, var(--brand) 75%, #ffffff);            /* middle of the cover stripe */
+  --tint-line:color-mix(in srgb, var(--brand) 20%, #ffffff);              /* callout border */
+  --tint-2-line:color-mix(in srgb, var(--accent) 30%, #ffffff);           /* warning border */
+  --accent-ink:color-mix(in srgb, var(--accent) 55%, #000000);            /* warning title */
+  --row-alt:color-mix(in srgb, var(--tint) 45%, #ffffff);                 /* striped table rows */
   --display:'Fraunces', Georgia, serif; --sans:'Inter', system-ui, sans-serif;
 }
 *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 html,body{margin:0;padding:0;}
 body{font-family:var(--sans);color:var(--body);font-size:11.5pt;line-height:1.62;}
-@page{size:A4;margin:20mm 18mm 18mm;}
+@page{size:Letter;margin:20mm 18mm 18mm;}
 @page:first{margin:0;}
 
 /* ===== COVER (bold cookbook / magazine style) ===== */
-.cover{position:relative;height:297mm;width:100%;display:flex;flex-direction:column;
+.cover{position:relative;height:11in;width:100%;display:flex;flex-direction:column;
    background:var(--brand-deep);color:#fff;overflow:hidden;page-break-after:always;}
 .cover-photo{position:relative;flex:1 1 auto;min-height:0;
-   background:url('images/cover.jpg') center 42%/cover no-repeat;}
+   /* the gradient underneath shows only if cover.jpg is missing, so the cover never looks broken */
+   background:url('images/cover.jpg') center 42%/cover no-repeat,
+              linear-gradient(160deg,var(--brand) 0%,var(--brand-deep) 100%);}
 .cover-photo::after{content:'';position:absolute;inset:0;background:
-   linear-gradient(180deg, rgba(11,42,51,.48) 0%, rgba(11,42,51,0) 26%, rgba(11,42,51,0) 88%, rgba(11,42,51,.30) 100%);}
+   linear-gradient(180deg, color-mix(in srgb, var(--brand-deep) 48%, transparent) 0%, color-mix(in srgb, var(--brand-deep) 0%, transparent) 26%, color-mix(in srgb, var(--brand-deep) 0%, transparent) 88%, color-mix(in srgb, var(--brand-deep) 30%, transparent) 100%);}
 .masthead{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;justify-content:space-between;
    align-items:center;padding:22px 26px;}
 .masthead .brandmark{display:flex;align-items:center;gap:9px;font-family:var(--sans);font-weight:700;
    font-size:12pt;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.35);}
 .masthead .brandmark .dot{width:11px;height:11px;border-radius:50%;background:var(--brand);
-   box-shadow:0 0 0 4px rgba(0,194,209,.4);}
+   box-shadow:0 0 0 4px color-mix(in srgb, var(--brand) 40%, transparent);}
 .masthead .tag{font-family:var(--sans);font-weight:700;letter-spacing:.14em;text-transform:uppercase;
    font-size:8pt;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);
    padding:7px 14px;border-radius:30px;}
 .cover-panel{flex:0 0 auto;background:var(--brand-deep);padding:34px 24mm 30px;position:relative;}
 .cover-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;
-   background:linear-gradient(90deg,var(--brand) 0%, #17d6c6 45%, var(--accent) 100%);}
+   background:linear-gradient(90deg,var(--brand) 0%, var(--brand-light) 45%, var(--accent) 100%);}
 .cover-panel .kicker{font-family:var(--sans);font-weight:700;letter-spacing:.24em;text-transform:uppercase;
    font-size:10pt;color:var(--brand);margin:0 0 12px;}
 .cover-panel h1{font-family:var(--display);font-weight:600;font-size:52pt;line-height:.98;margin:0;
    letter-spacing:-.6px;color:#fff;}
 .cover-panel h1 em{font-style:italic;color:var(--brand);}
-.cover-panel .tagline{font-size:13.5pt;line-height:1.5;color:#CFE3E7;margin:18px 0 0;max-width:40ch;}
+.cover-panel .tagline{font-size:13.5pt;line-height:1.5;color:var(--on-deep);margin:18px 0 0;max-width:40ch;}
 .cover-panel .foot{display:flex;justify-content:space-between;align-items:center;margin-top:24px;
-   padding-top:16px;border-top:1px solid rgba(255,255,255,.16);font-size:9.5pt;color:#9FB6BC;}
+   padding-top:16px;border-top:1px solid rgba(255,255,255,.16);font-size:9.5pt;color:var(--on-deep-muted);}
 .cover-panel .foot b{color:#fff;font-weight:600;}
 
 /* ===== INTERIOR ===== */
@@ -122,12 +142,12 @@ ol li::marker{color:var(--brand);font-weight:700;}
 
 /* callouts */
 .callout{border-radius:14px;padding:16px 18px 16px 20px;margin:20px 0;position:relative;
-   background:var(--tint);border:1px solid #CFF1F4;break-inside:avoid;}
+   background:var(--tint);border:1px solid var(--tint-line);break-inside:avoid;}
 .callout .ct{font-family:var(--sans);font-weight:700;font-size:10.5pt;letter-spacing:.02em;
    color:var(--brand-deep);margin:0 0 4px;display:flex;align-items:center;gap:8px;}
-.callout p{margin:0;font-size:10.8pt;color:#33474D;}
-.callout.warn{background:var(--tint-2);border-color:#FFE2B8;}
-.callout.warn .ct{color:#8A5A12;}
+.callout p{margin:0;font-size:10.8pt;color:var(--ink-soft);}
+.callout.warn{background:var(--tint-2);border-color:var(--tint-2-line);}
+.callout.warn .ct{color:var(--accent-ink);}
 
 .pullquote{font-family:var(--display);font-style:italic;font-weight:500;font-size:18pt;line-height:1.4;
    color:var(--brand-deep);text-align:center;margin:26px 8mm;padding:0;break-inside:avoid;}
@@ -146,14 +166,14 @@ table{width:100%;border-collapse:separate;border-spacing:0;margin:18px 0;font-si
 th{background:var(--brand-deep);color:#fff;text-align:left;padding:10px 13px;font-family:var(--sans);
    font-weight:600;font-size:9.6pt;}
 td{padding:9px 13px;border-top:1px solid var(--line);vertical-align:top;}
-tr:nth-child(even) td{background:#F7FBFC;}
+tr:nth-child(even) td{background:var(--row-alt);}
 td:first-child{font-weight:600;color:var(--brand-deep);}
 
 /* images */
 .chapter-banner{width:100%;height:44mm;object-fit:cover;border-radius:16px;display:block;
-   margin:16px 0 4px;box-shadow:0 12px 28px rgba(11,42,51,.16);}
+   margin:16px 0 4px;box-shadow:0 12px 28px color-mix(in srgb, var(--brand-deep) 16%, transparent);}
 figure.fig{margin:22px 0;break-inside:avoid;}
-figure.fig img{width:100%;height:52mm;object-fit:cover;border-radius:14px;display:block;box-shadow:0 10px 24px rgba(11,42,51,.13);}
+figure.fig img{width:100%;height:52mm;object-fit:cover;border-radius:14px;display:block;box-shadow:0 10px 24px color-mix(in srgb, var(--brand-deep) 13%, transparent);}
 figure.fig figcaption{font-family:var(--sans);font-size:9pt;color:var(--muted);font-style:italic;text-align:center;margin-top:9px;}
 </style></head><body>
 

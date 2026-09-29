@@ -22,13 +22,20 @@ function isConfigured(env) {
 
 async function call(pathStr, method, body, env) {
   const { token } = creds(env);
-  const res = await fetch(BASE + pathStr, {
-    method,
-    headers: { Authorization: 'Bearer ' + token, Version: VERSION, 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data };
+  // Never throw: the sale loop calls this between delivering a product and remembering the sale,
+  // so an exception here (offline, DNS) would get the buyer emailed again on the next run.
+  try {
+    const res = await fetch(BASE + pathStr, {
+      method,
+      headers: { Authorization: 'Bearer ' + token, Version: VERSION, 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(30000),
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    return { ok: false, status: 0, data: { message: `couldn't reach GoHighLevel (${err.message})` } };
+  }
 }
 
 // Upsert a buyer and tag them. GHL de-duplicates by email, so a repeat buyer updates their
@@ -53,7 +60,9 @@ async function addBuyer({ email, name, tags = [], env } = {}) {
   if (!r.ok && (r.status === 400 || r.status === 409)) {
     const dupId = r.data && r.data.meta && r.data.meta.contactId;
     if (dupId) {
-      const upd = await call('/contacts/' + dupId, 'PUT', { tags }, env);
+      // ADD tags (never PUT { tags } — that REPLACES every tag they already have, which would
+      // silently pull a repeat buyer out of the seller's other sequences).
+      const upd = await call('/contacts/' + dupId + '/tags', 'POST', { tags }, env);
       return upd.ok
         ? { ok: true, contactId: dupId, existing: true }
         : { ok: false, reason: 'found existing contact but could not tag it' };
@@ -67,7 +76,7 @@ async function addBuyer({ email, name, tags = [], env } = {}) {
   return { ok: true, contactId: r.data && r.data.contact && r.data.contact.id };
 }
 
-// Read-only connection test — used by setup-connections so the buyer sees proof it works before
+// Read-only connection test — used by the connect page and health check so the buyer sees proof it works before
 // anything is written to their CRM.
 async function testConnection(env) {
   if (!isConfigured(env)) return { ok: false, reason: 'GHL_TOKEN / GHL_LOCATION_ID not set in .env' };

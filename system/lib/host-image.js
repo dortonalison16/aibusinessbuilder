@@ -31,6 +31,7 @@ function hostImage(filePath, env) {
         } catch (err) { resolve({ ok: false, reason: 'parse', message: err.message }); }
       });
     });
+    req.setTimeout(120000, () => req.destroy(new Error('timed out after 120s'))); // a stalled connection must not hang a scheduled job
     req.on('error', (err) => resolve({ ok: false, reason: 'network', message: err.message }));
     req.write(body); req.end();
   });

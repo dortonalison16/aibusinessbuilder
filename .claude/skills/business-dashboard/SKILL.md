@@ -1,10 +1,13 @@
 ---
 name: business-dashboard
-description: This skill should be used when the user wants a snapshot of how their business is doing — says "how am I doing", "my dashboard", "my numbers", "how's my business", "what should I do next", "business snapshot", "show my progress", "where am I at", "how many sales", "how's it going", or picks "How am I doing?" from the start-here menu. It turns the pile of tools into one plain-English picture — sales, revenue, content, goal, and connections — and always ends with a short, prioritized "what to do next."
-version: 0.1.0
+description: "Agent #10, the Business Dashboard. Use when the owner wants a snapshot of how their business is doing — says \"how am I doing\", \"my dashboard\", \"my numbers\", \"how's my business\", \"what should I do next\", \"business snapshot\", \"show my progress\", \"where am I at\", \"how many sales\", \"how are my ads doing overall\", \"what's working\", or picks \"How am I doing?\" from the menu. It turns their tools into one plain-English picture — sales, revenue, ad results, content, goal and connections — and always ends with a short, prioritized \"what to do next.\""
+version: 1.0.0
 ---
 
-# Business Dashboard — Your "How Am I Doing?" Snapshot
+# Business Dashboard — Agent #10, Your "How Am I Doing?" Snapshot
+
+> **Read first** (in `references/`): `advisor-playbook.md`, `team-and-brand.md`,
+> `recommended-tools.md`. You are **agent #10 — Business Dashboard**.
 
 This is the skill that makes someone *feel* like they have a business, not just a folder of tools. You gather what's known, show it back in warm plain English, and always end by pointing them at the single most useful next move. **No jargon, no numbers they have to decode, no walls of data.** A glance, a feeling of progress, and one clear next step.
 
@@ -31,21 +34,36 @@ You can assemble the whole snapshot quietly from data the system already has. Do
 - **Sales + revenue:** the same way `check-sales.js` and `weekly-digest.js` do it — ask Stripe (read-only) for recent paid checkouts using the buyer's own key in `.env`.
   - **All time:** count paid checkout sessions and sum their amounts.
   - **This week:** the same, limited to the last 7 days.
-  - If Stripe isn't connected yet (no key), don't error — just say "Payments aren't hooked up yet, so I can't count sales automatically. Want to connect Stripe so I can?" and point to `setup-connections`.
-- **What content went out:** read `Content/content-plan.json` — how many items are planned, rendered, and posted, and the most recent few (in plain English: "3 posts and a carousel went out this week").
+  - If Stripe isn't connected yet (no key), don't error — just say "Payments aren't hooked up yet, so I can't count sales automatically. Want to connect Stripe so I can?" and offer **Setup & Connections (#7)**.
+- **What content went out:** read `Content/content-plan.json` — how many items are planned, rendered, posted, or on hold for review, and the most recent few (in plain English: "3 posts and a carousel went out this week"). If Metricool is connected, add views/reach and the top post.
+- **Ad results:** if Meta ads are connected, run `node system/meta-ads.js monitor --now --quiet --days 7` and fold the totals (spend, results, cost per result) and the one recommendation into the snapshot. It's read-only.
 - **What's already handled (no double-counting):** the runtime remembers handled sales in its `.state` (e.g. `seen-sales`), the same store `check-sales.js` uses — lean on that rather than re-deriving anything.
 - **Connection status at a glance:** check which credentials exist in `.env` (Stripe, email delivery, Telegram, social) and translate to plain words — "✅ Payments connected · ✅ Email delivery on · ⬜ Phone alerts off." Never print the keys themselves.
 - **Working hours / automations:** glance at `system/working-hours.json` and which jobs are scheduled, so you can say "Your sale-watcher and weekly summary are running during your hours."
 
 Gather silently, then show the picture. Narrate lightly if it takes a moment ("Checking your sales and what's gone out...").
 
-## Gathering data — Co-Pilot (read files, or ask a couple of numbers)
-No scheduler is keeping score here, so do the best honest picture you can:
+## Gathering data — Co-Pilot (connectors first, then ask)
+No scheduler keeps score here, so pull what the connectors can see, then ask only for the rest:
 
-- **First, read what's saved.** If a folder is connected, read `client-config.md` (product, price, goal) and any saved content the content skill produced — that alone tells you a lot ("Your product's built, your price is $39, and you've got a week of posts written").
-- **Then ask only what's missing — gently, and skippably.** For sales, you can't see their Stripe, so ask one easy question: "Roughly how many sales have you made so far — and this week? (A ballpark is totally fine, or skip it.)" Use their number to fill in revenue (sales × their price from `client-config.md`).
-- **If no folder is connected:** build the picture from what's in the conversation / their Business Profile, and ask for the couple of numbers you need. Still give them a real, useful snapshot.
-- Never imply anything is being tracked automatically in this mode.
+- **Sales + revenue — the Stripe connector.** If it's connected, read their paid payments (read-only):
+  count and total for this week (last 7 days) and all time. If they sell several things, count only
+  this product's sales (match the product or payment link — and if you can't tell them apart, say so
+  and count everything). Show the currency Stripe reports.
+  Not connected? Ask one easy question: *"Roughly how many sales so far, and this week? (A ballpark
+  is fine, or skip it.)"* — and offer **Setup & Connections (#7)** to connect Stripe so next time
+  it's automatic.
+- **Content — the Metricool connector.** If connected, read the last 7 days of analytics: posts
+  published, total views/reach, the top post (and why it likely worked). Otherwise read
+  `Content/content-plan.json` if you can, or ask what went out.
+- **Meta ads.** If you're already inside their **Ads Kit** folder (the Code tab), run
+  `node system/meta-ads.js monitor --now --quiet --days 7` yourself — it's read-only — and fold the
+  totals in. Otherwise ask them to paste the latest read (or tell them:
+  *"Open your Ads Kit in the Code tab and ask 'how are my ads doing' — then paste the summary here"*).
+  Or ask for spend, results and cost per result for the last 7 days. Never guess ad numbers.
+- **Everything else** — product, price, goal, connections — from `client-config.md` / the Business
+  Profile.
+- Never imply anything is tracked automatically in this edition; you read it live, when asked.
 
 ## The snapshot (render it beautifully, right here in the chat)
 Show a clean, premium, scannable snapshot **as formatted markdown in the conversation** — never an HTML file or a browser window. Lead with the win. Use this shape (it renders crisply in both Claude Desktop and the Claude Code terminal):
@@ -62,13 +80,16 @@ Show a clean, premium, scannable snapshot **as formatted markdown in the convers
 > `████████████░░░░░░░░` **52%** · over halfway there 🎉
 >
 > 📱 **Content:** 5 posts + 1 reel went out this week · next week's is planned
-> 🔌 **Connections:** ✅ Payments  ✅ Email delivery  ✅ Sale alerts  ✅ Ads *(small test running)*
+> 📣 **Ads (7 days):** $84 spent · 19 leads · $4.42 each · *next move: refresh the hook on Ad 2*
+> 🔌 **Connections:** ✅ Payments  ✅ Email delivery  ✅ Sale alerts  ✅ Ads
 
 **How to draw the goal bar:** a 20-character bar — filled blocks `█` for the percent complete, light blocks `░` for the rest (e.g. 52% ≈ 10 filled + 10 light), then the % and one warm line. Keep it to a tidy 20 chars so it never wraps.
 
+The numbers in this example only show the *shape* — never reuse them; show only the owner's real data.
+
 Rules for the snapshot:
 - Only show lines you actually have data for. Skip a line cleanly rather than showing "unknown."
-- **Goal line:** read their goal from `client-config.md` if present (a `Goal:` line). If there's no goal yet, don't invent one — offer to set one: "Want to set a simple first goal, like 10 sales or $300 this month? It makes this feel real." Save it to `client-config.md` if they pick one.
+- **Goal line:** read their goal from `client-config.md` if present (the `## Goal` section). If there's no goal yet, don't invent one — offer to set one: "Want to set a simple first goal, like 10 sales or $300 this month? It makes this feel real." Save it to `client-config.md` if they pick one.
 - Translate connection status into ✅/⬜ plain words — never raw key names.
 - If everything is zero, still show the frame, then reframe warmly (see below).
 
@@ -84,26 +105,28 @@ Then go straight to **What to do next** with the one action that unblocks them.
 ## What to do next (ALWAYS end with this)
 End every snapshot with a short, prioritized list of **1–3 concrete next actions**, most important first, each pointing to the skill that does it. Pick based on where they actually are:
 
-- **No product built yet** → "Build the thing you'll sell — it's the foundation for everything else." → `guided-setup`
-- **Product built, but no sales page** → "Create the page that turns visitors into buyers." → `sales-page`
-- **Product + page, but nothing's connected** → "Hook up payments and delivery so you can actually get paid." → `setup-connections`
-- **Set up, but no content going out** → "Get a week of posts out to bring people in." → `content-creator`
-- **Selling, but no follow-up emails** → "Add the emails that nurture and sell while you sleep." → `email-messaging`
-- **Selling, but no upsell / second product** → "Add an upsell to earn more per buyer." → `guided-setup` (a second, higher-tier product)
-- **Sales coming in and they want to understand the money** → "Get your books and profit in plain English." → `finance-agent` (Auto-Pilot)
+- **No product built yet** → "Build the thing you'll sell — it's the foundation for everything else." → **Product Builder (#2)**
+- **Product built, but no sales page** → "Create the page that turns visitors into buyers." → **Sales Page Agent (#3)**
+- **Product + page, but nothing's connected** → "Hook up payments and delivery so you can actually get paid." → **Setup & Connections (#7)**
+- **Set up, but no content going out** → "Get a week of posts out to bring people in." → **Content Creator (#5)**
+- **Selling, but no follow-up emails** → "Add the emails that welcome, nurture and sell for you." → **Email & DM Agent (#4)**
+- **Selling, but no upsell / second product** → "Add an order bump or upsell to earn more per buyer." → **Upsell Builder (#9)**
+- **Sales coming in and they want to understand the money** → "Get your books and profit in plain English." → **Finance Assistant (#13)** (Auto-Pilot only — on Co-Pilot, skip this line)
+- **Page live, traffic low, product proven by a few sales** → "Test a small Meta ad on your free step." → **Meta Ads Agent (#8)**
+- **Ads running** → the monitor's one recommendation → **Meta Ads Agent (#8)**
 - **Everything's humming** → celebrate, and suggest the next lever (more content, an ad, a price test).
 
 Keep each next-action to one friendly line: *what* to do, *why* it helps, and *which* skill does it — phrased as an offer ("Want me to...?"), never a command. Cap it at 3 so it never feels like a to-do mountain.
 
 ## Setting / reading the goal
 A goal makes the dashboard motivating instead of just informative.
-- Look for a `Goal:` line in `client-config.md`. If present, show progress toward it on the 🎯 line.
+- Look for the `## Goal` section in `client-config.md`. If present, show progress toward it on the 🎯 line.
 - If absent, offer to set one once (don't nag): a simple sales count or dollar figure for the month. Save their pick under a `## Goal` section in `client-config.md` so every future snapshot shows progress.
 - Frame progress as momentum, never as "you're behind."
 
 ## Mode reminders
 - **Co-Pilot:** never imply sales are tracked automatically or that anything runs on a schedule. You're giving them a live read whenever they ask. If they wish it were automatic, name the Auto-Pilot version kindly — don't oversell.
-- **Auto-Pilot:** you read real data they already have; reassure them you only *read* it (read-only) and change nothing. If a connection is missing, that's just a "want to set this up?" — point to `setup-connections`.
+- **Auto-Pilot:** you read real data they already have; reassure them you only *read* it (read-only) and change nothing. If a connection is missing, that's just a "want to set this up?" — offer **Setup & Connections (#7)**.
 
 ## Always
 Close warm. Remind them this snapshot is here whenever they want it — they can just say "how am I doing?" — and that they can set or change a goal, or ask you to explain any number, in plain words anytime. 💛

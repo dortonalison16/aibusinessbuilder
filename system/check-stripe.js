@@ -17,6 +17,7 @@ function getStripeAccount(key) {
       res.on('data', (d) => (body += d));
       res.on('end', () => resolve({ status: res.statusCode, body }));
     });
+    req.setTimeout(30000, () => req.destroy(new Error('timed out after 30s'))); // a stalled connection must not hang a scheduled job
     req.on('error', (err) => resolve({ status: 0, body: err.message }));
     req.end();
   });

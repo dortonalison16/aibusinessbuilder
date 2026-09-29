@@ -60,3 +60,5 @@ Mode: Automated (Claude Code)
 - Affiliate links collected (see affiliate-links.md): Skool, Systeme.io, Stan Store. Still needed: email tool, design tool (e.g. Canva), scheduler.
 - Product 1 v2: fixed cover, page breaks (each chapter on new page), real fonts embedded (Product/fonts). 17 pages.
 - Sales page v1 built: Sales-Page/index.html (+ sales-copy.md, preview PNGs). $37, 7-day guarantee (default, owner can change). Checkout button link is a placeholder (#CHECKOUT-LINK) until Systeme.io checkout exists. No testimonials yet.
+- Guarantee updated to 14-day ACTION-BASED (do the Chapter 1-3 action steps; if still no idea + promise, email completed work for refund). Sales page/copy updated.
+- Machine updated to v2.0.0 on 2026-09-29 (backup in _before-update-2026-09-29-2050, gitignored). All info kept.

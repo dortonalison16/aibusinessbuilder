@@ -1,0 +1,4 @@
+node_modules/
+.env
+_before-update-*/
+system/.state/

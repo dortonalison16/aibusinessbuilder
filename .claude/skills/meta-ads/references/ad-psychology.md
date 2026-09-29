@@ -199,7 +199,7 @@ paid social. Say "not enough data yet" and mean it — that answer is worth more
 |---|---|---|
 | Spend, zero conversions, past the floor | Genuinely not working | Turn it off |
 | Cost per result above break-even | Losing money per sale | Turn it off |
-| Cost per result comfortably under target, 3+ conversions | Working | Raise budget ~25%, no more |
+| Cost per result comfortably under target, 3+ conversions | Working | Raise budget ~20–25%, no more |
 | **Frequency above ~2.5** | Same people seeing it repeatedly | **New creative** — not new targeting |
 | Good CTR, poor conversion | The ad works, the page doesn't | Fix the page, keep the ad |
 | Poor CTR, good conversion when they do land | The offer works, the hook doesn't | New hook, same offer |
@@ -211,7 +211,7 @@ first; changing the audience resets learning for nothing.
 
 ### Scaling without breaking it
 
-- Raise budget in **~25% steps**, and wait 3–4 days between steps. Doubling a budget usually
+- Raise budget in **~20–25% steps** (the monitor suggests 20%), and wait 3–4 days between steps. Doubling a budget usually
   resets the learning phase and performance gets worse before it recovers.
 - **Scale the ad set, not the ad.** Duplicating a winning ad into a new campaign rarely
   reproduces it — the learning lived in the ad set.
@@ -238,3 +238,52 @@ record; everything else in ads is downstream of it.
 4. **Chasing a cheap cost-per-lead into the wrong countries.** The metric improves, the business
    doesn't, and the algorithm learns the wrong lesson.
 5. **Six variations of one idea.** They lose together and teach nothing. Vary the *angle*.
+
+---
+
+## 9. The arithmetic that sets the budget
+
+**Your maximum cost per lead = what a lead is worth in its first 30 days ÷ the return you need.**
+
+Example: 100 leads bring 3 sales of a $47 product in 30 days → each lead is worth about $1.41. If
+you want every ad dollar back at least 1.5× (so you can cover tools and still grow), your ceiling is
+about $0.94 per lead. Above it, you're paying to lose money; below it, you can scale.
+
+Until the owner has 30 days of real numbers, say so plainly and use the guardrails in the monitor
+(the spend floor and target cost) as a *starting* guess — then replace the guess with their real
+value-per-lead as soon as it exists. A purchase campaign needs the same math with value per sale.
+
+## 10. Lessons from real campaigns (small budgets, cold traffic, a digital product)
+
+- **Cheap clicks + no sales = the page, not the ad.** If people click at a healthy rate (roughly 1%+
+  link click-through) and nobody buys or signs up, the ad did its job. Switching it off throws away
+  your best traffic. Check the page on a phone, the checkout, the load speed, and whether the page
+  delivers what the ad promised. The monitor flags this as **CHECK YOUR PAGE** for that reason.
+- **Proof beats pretty.** A short video that *shows the thing working* (the product, the result,
+  the process) usually beats a polished static for a sale. Statics are fine for free lead magnets.
+- **Put the payoff line first.** The same ad with its strongest line moved to the top often wins by
+  a wide margin. Test openers before you test anything else.
+- **Buyers come back.** On a 7-day click window, a sale often lands days after the click. Don't
+  judge a sales ad on day 2.
+- **3–5 live ads per ad set.** More than that splits a small budget so thin that nothing learns.
+  Keep the rest paused on the bench and rotate a new one in when an ad fatigues.
+- **Don't raise the budget on something that hasn't sold yet.** Scale what converts; fix what doesn't.
+- **Test a free step first.** A free guide, checklist or workshop reaches the ~50 conversions a week
+  learning needs on a small budget; a direct sale of a higher-priced product usually can't.
+
+## 11. Before you hand over any ad — the checklist
+
+Fix anything that fails before the owner sees it:
+
+- [ ] **No income or earnings claims** — no "$X/month", "replace your salary", "passive income",
+      "guaranteed", "get rich", before/after money screenshots. Costs and time saved are fine.
+- [ ] **No personal-attribute callouts** ("Are you a broke mom?", "Struggling with debt?") — Meta
+      rejects ads that imply they know the viewer's personal traits. Describe the situation instead.
+- [ ] **No organic tricks in paid** — no "comment WORD below" (ads don't trigger comment automations
+      reliably); use the button.
+- [ ] **The ad promises only what the destination delivers** — if the free guide doesn't contain a
+      "30-day plan", the ad can't mention one.
+- [ ] **No "no catch / no pitch"** on a free thing that leads to an offer. Be honest about the next step.
+- [ ] Each ad is a **different angle**, named, so the results teach something.
+- [ ] Headline under ~40 characters; primary text opens on the viewer's moment, not the product.
+- [ ] Image text is readable on a phone at thumbnail size.

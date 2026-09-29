@@ -1,62 +1,115 @@
-﻿AI Freedom Machine - Auto-Pilot Edition
+AI Freedom Machine - Auto-Pilot Edition
 =======================================
 
-Welcome! Everything you need is in this folder. Start here, then follow the guide.
+Welcome! Setup is four short steps. Your assistant does the technical parts.
 
 
-FIRST - a word about the files you can see
-------------------------------------------
-Some of these look technical. You do NOT need to open, edit, or understand any of them:
+FIRST - the files in here look technical. Ignore them.
+------------------------------------------------------
+You do NOT need to open, edit, or understand any of these:
 
-  system            <- your automation engine. Your assistant uses it. Leave it alone.
-  .env.template     <- a blank form for your own passwords, filled in later WITH you.
-  .claude           <- your 14 specialists, already installed. You may not even see this
-                       folder; that's normal, it's hidden by default.
+  system          <- your automation engine. Your assistant uses it.
+  .env.template   <- a blank form for your keys. The connect page fills it in.
+  .claude         <- your 14 agents, already installed.
+  GET-STARTED.md  <- your assistant reads this to orient itself.
+  UPDATING.md     <- how your assistant installs a new version for you, right
+                     here in this folder. You just say "let's get updated".
+  EDITION.txt and CLAUDE.md  <- two tiny notes that tell your assistant which
+                                edition this is.
 
-Nothing here is broken and nothing is missing. You only ever touch the two PDFs.
+(Product and Content are plain folders for your finished product and your
+ content. Your assistant fills them. Product has a short README inside; Content's
+ is in Content/ads.)
 
-
-STEP 1 - Read the guide
------------------------
-Open "AI Freedom Machine - Auto-Pilot - Getting Started.pdf".
-
-It walks you through the setup click by click: creating your Claude account, installing the
-free engine (Node.js), installing your assistant, and opening it inside this folder.
-
-Give it 15-20 minutes for the first run. It is more involved than the desktop version -
-that's the honest trade for something that afterwards runs without you. None of it needs
-tech skills, and every step is spelled out.
-
-  (The other PDF - "What It Can Do" - lists every capability, every command, and every
-   automation that will run for you. Read that AFTER you're set up. It's a map, not
-   homework.)
+(On a Mac, .env.template and .claude are hidden, so you won't see them at all.
+ That's normal. On Windows they may be hidden too.)
 
 
-STEP 2 - Say hello
+STEP 1 - Put this folder somewhere permanent
+--------------------------------------------
+  Windows: move the "AI Freedom Machine - Auto-Pilot" folder into Documents.
+           Use the INNER folder - the one with this READ ME FIRST file directly
+           inside it. ("Extract All" can put it inside a second folder with the
+           same name; that outer one is just a wrapper.)
+  Mac:     Safari usually unzips the download for you, so the folder is already
+           in Downloads (the .zip goes to the Trash; that's normal). If you only
+           see the .zip, double-click it. Then move the folder into your home
+           folder (the one with your name - NOT Desktop, Documents or Downloads;
+           macOS blocks background jobs there). To open your home folder: in
+           Finder choose Go > Home from the menu bar (or press Shift + Cmd + H),
+           then drag the folder in.
+Don't rename or move it later - if you ever do, just tell your assistant.
+
+
+STEP 2 - Open the Claude desktop app, then the CODE tab
+-------------------------------------------------------
+Get it from claude.ai/download if you haven't already, and sign in (paid plan -
+Pro is plenty). Mac: macOS 13.5 (Ventura) or newer - check Apple menu > About
+This Mac. Click the Code tab, then choose this folder (the inner one, with
+READ ME FIRST directly inside) as your project.
+
+  Windows: if it asks you to install Git, say yes (or ask your assistant how).
+  Mac:     if a pop-up says 'The "git" command requires the command line
+           developer tools', click Install (free, from Apple, a few minutes).
+           It's the Mac version of the Windows Git step, and it may pop up
+           again once or twice while it downloads; that's normal.
+
+
+STEP 3 - Say hello
 ------------------
-With your assistant open in this folder, type:
+Type:
 
     let's get started
 
-It will ask what hours your computer is usually on, then take it from there.
+The first time, your assistant installs its engine for you (it takes a few
+minutes), runs a quick health check so you can see what's connected, then asks
+what hours your computer is usually on and you're logged in, so automations
+only run when they'll actually work.
+
+  Windows: it may ask to install Node.js - say yes. If Windows asks
+           "allow changes?", click Yes.
+  Mac:     your assistant sends you to nodejs.org. Click the green LTS button,
+           open the downloaded .pkg, click Continue until it asks for your Mac
+           password (you need an admin account for this one step), then
+           restart the Claude app.
 
 
-IF ANYTHING GOES SIDEWAYS
+STEP 4 - Connect your accounts
+------------------------------
+Your assistant opens a small "connect page" in your browser. You paste each key
+into its card and click "Save & test" - one at a time, with exact directions for where to
+find each one. Your keys stay on your computer.
+
+
+WHAT YOU'LL SEE
+---------------
+It will ask permission before running things or saving files. That's normal -
+nothing happens on your computer without your OK.
+
+  Mac: after your automations are turned on, your Mac shows a notice:
+       "Background Items Added - software from 'Node.js Foundation' added
+       items that can run in the background". Nothing on screen says AI
+       Freedom Machine; that's your Machine registering its schedule. Leave
+       the switch for Node.js Foundation ON (it may show as node or Unknown
+       Developer). If it's ever off, your automations stop - turn it back on
+       in System Settings > General > Login Items & Extensions (called just
+       Login Items on macOS 13 and 14). It's one switch for all your automations
+       (and anything else on your Mac that runs through Node.js), so turning
+       it off stops all of them at once.
+
+  Getting Started guide  - these steps in more detail, plus the connect page card by card
+  What It Can Do         - every agent and every automation. Read it after setup.
+
+
+IF SOMETHING DOESN'T WORK
 -------------------------
-Three fixes cover almost every install snag, and all three take under a minute:
+  - Check you're on the CODE tab with this folder chosen.
+  - Tell your assistant exactly what you see, in plain words.
+  - Search helpvault.theaifreedommachine.com, or reply to your welcome email -
+    it comes straight to me and I answer personally, usually within one
+    business day.
 
-  "node is not recognized"     -> close and reopen your command window
-  "npm install failed"         -> make sure you're inside this folder, then run it again
-  "claude command not found"   -> run the install line once more, then reopen the window
+Please don't try to do everything tonight. One step at a time is genuinely faster.
 
-Still stuck? Two options, in this order:
-  1. Search the Help Vault:  helpvault.theaifreedommachine.com
-  2. Reply to your welcome email. It comes straight to me and I answer personally,
-     usually within one business day. Send a screenshot if it's easier.
-
-Please don't try to do all of this tonight. The people who get stuck are almost always the
-ones who sat down determined to finish in one sitting, hit a snag at 11pm, and closed the
-laptop. One step at a time is genuinely faster.
-
-- Ash
-  Founder, AI Systems Method
+-Ash
+Founder, AI Systems Method

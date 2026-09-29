@@ -1,198 +1,122 @@
-# How to Get Started — Your Step-by-Step Guide 💛
+# GET STARTED — orientation for the assistant (and the owner)
 
-Welcome! This guide gets your AI business assistant up and running. It looks like a lot, but
-each step is just "click this, then that." Take it slow. You've got this.
-
-> **You do NOT need to be techy.** And once your assistant is running, you can ask *it* for
-> help with anything — in plain words, anytime.
+*This file ships inside the **AI Freedom Machine — Auto-Pilot** folder. The assistant reads it on
+first contact to orient itself. Owner: you never need to open this — just say **"let's get started"**
+in the Claude app's **Code** tab with this folder chosen.*
 
 ---
 
-## First: pick your version (30 seconds)
+## What this folder is
 
-This system comes in **two versions that do the same things**. Pick the one that fits you:
+- **AI Freedom Machine, Auto-Pilot edition**, by AI Systems Method. `EDITION.txt` says `Auto-Pilot`.
+- The owner is **non-technical**. They bought an AI team that does the work while they review and
+  approve. Plain English, one question at a time, never a wall of options or raw command output.
+- **14 agents**, installed as skills in `.claude/skills/` (plus the `start-here` front door):
+  1 Idea Validator · 2 Product Builder · 3 Sales Page Agent · 4 Email & DM Agent · 5 Content Creator ·
+  6 Launch Guide · 7 Setup & Connections · 8 Meta Ads Agent · 9 Upsell Builder · 10 Business
+  Dashboard · 11 Customer-Support Assistant · 12 Auto-Pilot Automation System · 13 Finance Assistant ·
+  14 Health Check. Menu numbers are fixed; the roster and voice rules live in each skill's
+  `references/team-and-brand.md`.
 
-| | **✨ Easy Version (Desktop app)** | **⚙️ Automated Version (Claude Code)** |
-|---|---|---|
-| **Best for** | Most people. Simplest setup. | People who want it to run on its own. |
-| **How it works** | You ask, it creates — product, emails, content (carousels, reels, stories, posts), sales page — on the spot. | Same, PLUS it runs jobs on a schedule: writes & renders your weekly content, posts it for you (you preview first), auto-delivers every sale, and texts you each order. |
-| **Setup** | Download an app, sign in, add the skills. No "tech." | A bit more: install a free engine + the assistant. |
-| **Automations run by themselves?** | No — you ask whenever you want something. | Yes — while your computer is on. |
+## The front door
 
-**Not sure?** Start with the **Easy Version**. You can move up to the Automated Version later
-without losing anything — your answers are saved.
+When the owner greets you or says **"let's get started"**, use the **`start-here`** skill. It writes
+`Mode: automated/Code` as the first line of `client-config.md` (first run only), shows the 14-item
+menu, and routes. Never force them to start with building a product. If they're unsure, "guide me"
+→ **1 Idea Validator** is the best first win (about ten minutes, Go / Refine / Pivot verdict).
 
-- 👉 **Easy Version:** follow **Track A** below.
-- 👉 **Automated Version:** follow **Track B** below.
+## Updating to a new version
 
----
+When the owner says **"let's get updated"** (or "update my Machine", "install the update"), follow
+**`UPDATING.md`**: the new version is installed into THIS folder, in place, by
+`system/update.js` — never move, rename or re-create the folder, and never touch `.env`,
+`client-config.md` or `system/.state/`.
 
-# Track A — Easy Version (Claude Desktop app)
+## First-run sequence (do these once, in order, asking permission for each)
 
-### Step A1 — Create your Claude account
-1. Go to **https://claude.ai** in your web browser.
-2. Click **Sign up** and create an account (email or Google).
-3. The Co-Pilot experience runs on Claude's **Cowork** feature, which needs a paid plan —
-   **Claude Pro** is plenty to start. Click **Upgrade** and choose Pro.
-   *(This is your subscription to the AI itself — it's what powers your assistant.)*
+The owner never types commands — you run them, explain in one line what each does, and translate
+the result. Pause the sequence whenever they'd rather do agent 1 first; nothing here blocks it.
 
-### Step A2 — Download the Claude desktop app
-1. Go to **https://claude.ai/download**.
-2. Click the button for your computer (**Windows** or **Mac**).
-3. Open the downloaded file and install it (click through **Next/Continue → Install**).
-4. Open the **Claude** app and **sign in** with the account from Step A1.
+1. **Node check.** Run `node -v` (need 18+).
+   - Missing on **Windows**: ask, then `winget install -e --id OpenJS.NodeJS.LTS` (Windows may show
+     "allow changes?" — they click Yes). No winget → nodejs.org → green **LTS** button, defaults.
+   - Missing on **Mac**: send them to nodejs.org → click the green **LTS** button → open the
+     downloaded `.pkg` → click **Continue** until it asks for their Mac password (they need an admin
+     account for this one step; that's normal) → then restart the Claude app.
+   - **Windows:** afterwards, ask them to restart the Claude app so it sees Node.
+   - **Mac:** if `node -v` still says "command not found" after restarting the Claude app, use the
+     full path `/usr/local/bin/node` for node commands, and start npm commands with
+     `PATH="/usr/local/bin:$PATH"` (e.g. `PATH="/usr/local/bin:$PATH" npm install`; npm needs node on
+     the PATH); the scheduler will record that node path, which is what we want.
+   - **Windows:** if the Code tab asks to install Git, tell them to say yes.
+   - **Mac:** if the owner mentions a "command line developer tools" pop-up (the message reads *The
+     "git" command requires the command line developer tools*), tell them to click **Install** (or
+     run `xcode-select --install` for them). It's free, from Apple, takes a few minutes, and may pop
+     up again once or twice while it downloads; that's normal.
+2. **Install the engine.** `npm install` inside `system/`. Warn first: a few hundred MB, a few
+   minutes, a wall of text is normal. Never use `npm -g` or `sudo`.
+3. **Health check.** `node system/health-check.js` — translate ✅ / ⚠️ / ⬜ into plain words.
+   On a Mac, if it warns the folder is in Desktop, Documents or Downloads, help them move the whole
+   folder to their home folder (macOS blocks background jobs there) before scheduling anything.
+   Tell them how: *"your home folder is the one with your name. In Finder choose Go > Home from the
+   menu bar (or press Shift + Cmd + H), then drag the folder in."* Then have them choose the moved
+   folder again in the Code tab's folder picker so you're working from its new place. If automations
+   were already added, run `reregister` from there (on a first run there's nothing to re-point yet).
+4. **Working hours.** Ask which days and hours their computer is usually on, awake, and logged in
+   (a locked screen is fine). Save to
+   `system/working-hours.json` (3-letter days, 24h times). Every automation runs inside this window.
+5. **Connect page.** `node system/connect.js` opens `http://localhost:4848/?t=…` — the one-time code
+   on the end is required (the bare address is refused). If the browser doesn't open, give them the
+   full address the command prints. Walk the cards **one at a time** with the `setup-connections` skill:
+   Stripe → Gmail (or other email) → the product → Telegram → AI writing key → Facebook/Instagram
+   posting → Meta ads → GoHighLevel. Essentials are the first three; the rest can wait.
+6. **Automations.** When payments + delivery are green, hand to the **`automation-system`** skill
+   (agent 12) to add jobs through `node system/schedule-automation.js` — sale watcher and weekly
+   summary first, the rest only when their connections are ready.
 
-### Step A3 — Add your assistant's skills
-Your product came with a **`Skills` folder** containing several `.zip` files (one per skill).
-Add each one:
-1. In the Claude app, click **Customize** in the **left sidebar**, then open the **Skills** tab.
-   (Customize groups Skills, Plugins, and Connectors in one place.)
-2. Click the **➕**, then **Create skill**, then **Upload a skill**.
-3. **Choose one of the `.zip` files** from your `Skills` folder. *(Pick the `.zip` itself — don't
-   unzip it first.)*
-4. Repeat for each `.zip` — add them all, starting with `start-here`.
+## Where things live
 
-✅ You'll know it worked when you can type **`/`** in the message box and see them listed
-(like `/start-here`). You should end up with all your skills showing — if you're missing one,
-you skipped a `.zip`; just add it.
+| Path | What it is |
+|---|---|
+| `client-config.md` | Shared memory for all 14 agents (edition, audience, product, voice, brand, goal, connections — never keys). Create it on first run. |
+| `Product/` | The finished product (PDF) buyers receive. |
+| `Content/` | Content plan (`content-plan.json`), idea/story banks, rendered files, `ads/` for Meta ads. |
+| `system/` | The automation engine (Node scripts, `working-hours.json`, `logs/`). |
+| `.env` | The owner's keys. **Written only by the connect page.** `.env.template` shows the fields. |
+| `.claude/skills/` | The agents. Don't edit. |
 
-> **Not showing up when you type `/`?** Two usual causes: (1) you uploaded the *unzipped folder*
-> instead of the `.zip` file — re-add the `.zip` itself; or (2) you didn't finish the **Create
-> skill** step. Make sure you're signed in, then close and reopen the app and check again.
-> **Don't see a "Customize" button at all?** Your app may need updating — reinstall from
-> **https://claude.ai/download** and reopen.
+## Golden rules
 
-### Step A4 — (Recommended) Let it save your work in a folder
-This is optional but makes things smoother — it lets your assistant **save** your product,
-emails, and content as real files so nothing gets lost:
-1. Move your **business folder** (the one from your download) to your **Desktop**.
-2. In the Claude app, look for **Open folder** (or the folder icon) and choose that folder.
+- **Never ask for a password, key or token in the chat.** Keys go through the connect page only.
+  If they paste one anyway, don't repeat it; suggest rotating it later and saving it on the page.
+- **Meta ads are always created PAUSED.** Never enable an ad, raise a budget or spend money. The
+  daily ads check only reads and recommends.
+- **Posting stays in preview (dry-run)** until the owner has seen a preview and clearly says go.
+  Only then set `SOCIAL_DRY_RUN=false` for them (confirm first).
+- **Working hours.** Jobs run only while the computer is on, awake, and the owner is logged in (a
+  locked screen is fine) inside `system/working-hours.json`. Never promise anything "while you
+  sleep". If the computer is asleep at the scheduled time, the job runs when it wakes (inside their
+  hours). If it was off, or they were logged out, a daily job simply runs the next day, and a weekly
+  job tries again the next day or two if those are working days; if it still misses, they just say
+  "run my weekly content now" to catch up.
+- **Mac: "Background Items Added".** The first time automations are turned on, macOS shows the
+  notification *Background Items Added — software from "Node.js Foundation" added items that can
+  run in the background*. That's the Machine registering its schedule. macOS names the entry after
+  Node's code-signing certificate, so nothing on screen says "AI Freedom Machine". Tell the owner:
+  *"leave the switch for **Node.js Foundation** ON (it may show as node or Unknown Developer). If
+  it's ever off, your automations stop — turn it back on in System Settings › General › Login
+  Items & Extensions (called just Login Items on macOS 13 and 14). It's one switch for all your automations (and anything else on your Mac that
+  runs through Node.js), so turning it off stops all of them at once."* On a Mac the health check
+  flags an automation that Login Items has disabled; the fix is that switch.
+- **The AI writing key is optional** and billed separately by Anthropic (usually a few dollars a
+  month for weekly content). Scheduled jobs don't use the owner's Claude plan.
+- **Nothing is sent, posted, published, spent or deleted without a clear yes.** Customer replies,
+  refunds and live payment changes always wait for the owner.
+- **Claim-safe, always:** no income claims, earnings figures or guarantees in anything you write.
+- **If the folder moves:** run `node system/schedule-automation.js reregister`.
 
-**Don't have that option, or want to skip it?** Totally fine. Your assistant will just keep
-everything **in the chat** and give you a **"Business Profile"** to save — paste it back when
-you return and it remembers everything.
+## Help for the owner
 
-> 💡 **Tip to never lose your progress:** create a **Project** in Claude (left sidebar →
-> Projects → New), and paste your Business Profile into the Project's instructions. Then every
-> new chat in that Project already knows your business. Your assistant will offer to set this up.
-
-### Step A5 — Say hello 👋
-In the message box, type:
-```
-let's get started
-```
-Your assistant welcomes you and shows you a menu — **build your product, make content, write
-emails, build your sales page**, or just be guided. Pick whatever you want first.
-
-➡️ **Skip to "You're in — what now?" at the bottom.**
-
----
-
-# Track B — Automated Version (Claude Code)
-
-This version can run things on a schedule. It needs two free installs first.
-
-### Step B1 — Create your Claude account
-Same as Step A1 above (go to https://claude.ai, sign up, choose a paid plan).
-
-### Step B2 — Open your computer's command window
-This is a plain text window. It's not scary — you just type into it.
-- **Windows:** click **Start**, type **PowerShell**, click **Windows PowerShell**.
-- **Mac:** press **⌘ + Spacebar**, type **Terminal**, press **Enter**.
-
-### Step B3 — Install the free engine (Node.js)
-1. Go to **https://nodejs.org** and click the green **LTS** button.
-2. Open the download and click through **Next/Continue → Install** (accept defaults).
-3. **Close and reopen** the window from Step B2.
-4. Check it: type `node --version` and press Enter. If you see `v22.x.x` (or similar), 🎉.
-
-### Step B4 — Install your assistant (Claude Code)
-In the same window, paste this and press Enter:
-```
-npm install -g @anthropic-ai/claude-code
-```
-Let it finish (a minute of scrolling text is normal).
-
-### Step B5 — Open your assistant inside your business folder
-1. Move your **business folder** to your **Desktop**.
-2. In the window, type `cd ` (with a space), then **drag your business folder onto the window** —
-   it pastes the folder's location. Press Enter.
-   > *If dragging pastes nothing (this can happen on Windows PowerShell): open the folder, copy its
-   > path from the address bar at the top, then type `cd "` and paste, and add a closing `"`. The
-   > quotes matter if the path has spaces — e.g. `cd "C:\Users\You\Desktop\AI Freedom Machine"`.*
-3. Type:
-```
-claude
-```
-4. The first time, it'll ask you to **sign in** — follow the prompts.
-
-### Step B6 — Say hello 👋
-Type:
-```
-let's get started
-```
-The **first** time, your assistant sets up its tools for you (a one-time setup it runs itself —
-it takes a few minutes and needs internet; a wall of scrolling text is normal). After that,
-because this is the Automated Version, it can also **schedule things for you** — it'll ask what
-hours your computer is usually on, so jobs only run when they'll actually work.
-
----
-
-## You're in — what now?
-
-Your assistant takes over from here. Just talk to it normally. You can:
-- **Build your product**, **write your emails & DM scripts**, **build your sales page**
-- **Make a week of content** — carousels, reels, stories, posts. *(Automated Version renders the finished images & reels and can post them; Easy Version writes everything + gives you the exact prompts to build them fast in Canva.)*
-- **Run your Meta ads** — when you're ready for paid traffic, say *"set up my Meta ads for my product."* Your team writes the copy, creates the creative, **sets up the whole campaign in your ad account, then analyzes and optimizes it for you** — scaling what's working and switching off what isn't (the part most people find intimidating, handled). You set your budget and the rules; it works within them. *(Ads are optional — your content engine runs on $0. Add ads once your product and page are live.)*
-- **Connect your accounts** (Automated Version) so it can take payments, auto-deliver every sale,
-  text you each order, send a weekly summary, and **post your content on a schedule** (you preview first)
-- **Manage your books** (Automated Version — exclusive) — your built-in **Finance Assistant** helps with
-  bookkeeping, profit & loss, money & tax questions, and getting ready for your accountant, from a
-  simple receipt tracker all the way to QuickBooks (review-first — it never changes your books without your OK)
-- **Check everything's running** (Automated Version — exclusive) — say *"health check"* and your built-in **Health Check** confirms every connection, scheduled job, and delivery is working, then tells you in plain words if anything ever needs you
-- Change your mind, ask questions, or tweak anything — *just say it in plain words*
-
-> 💬 **You're always in control.** If you're unsure, stuck, or want something changed — type it
-> however you'd say it out loud. Your assistant is there to do the hard parts for you.
-
----
-
-## If you hit a usage limit ⏳
-
-Your Claude plan includes plenty for everyday work, but big jobs — building a full product, or a
-whole week of content in one sitting — use more of it. If Claude tells you you've reached your
-limit, **nothing is lost.** You have options:
-
-- **Just wait a bit.** Limits reset on a rolling basis (usually within a few hours). Come back and
-  continue right where you left off.
-- **Work in smaller bites.** Do one thing at a time — build your product first, then come back
-  later for content — instead of asking for everything at once.
-- **Save your progress.** Keep your **Business Profile** (or use a connected folder) so a brand-new
-  chat instantly remembers your business when you return.
-- **Know your plan options.** **Claude Pro** (~$20/mo) is the starting point and is plenty for most
-  people. If you regularly hit limits or use it heavily, **Claude Max** steps up: the **5× tier**
-  (~$100/mo) gives five times Pro's capacity, the **20× tier** (~$200/mo) gives twenty times. You can
-  change tiers anytime in your Claude account and your work carries over *(check claude.ai for current
-  pricing)*. **Any paid plan works — bigger plans don't add features, just more room** for back-to-back
-  big jobs (and, in the Automated Version, heavier scheduled automation, which draws from the same pool).
-  Start on Pro; only move up if you actually keep running out.
-
----
-
-## If you get stuck
-- **Easy Version:** make sure you added the skills (Step A3) and you're signed in. Type `/` to
-  check they're there.
-- **Automated Version:** the #1 mix-up is forgetting to **close and reopen** the window after
-  installing Node (Step B3). Try that first. A few other quick ones:
-  - **`node` or `npm` "not recognized"** → Node didn't finish installing, or the window wasn't
-    reopened. Close and reopen it; if it's still not found, reinstall Node from
-    **https://nodejs.org** and reopen once more.
-  - **`npm install` failed** → make sure you're online. On **Mac**, if you see a "permission" or
-    `EACCES` error, run the same line again with `sudo ` in front and enter your computer password.
-  - **`claude` "not recognized" after installing it** → close and reopen the window one more time
-    (it needs a fresh window to see the new command). If it still can't find it, re-run the install
-    line from Step B4.
-- Either way: once the assistant is running, just tell it what's happening — *"I'm stuck on
-  step 3"* — and it'll help you through it. 💛
-- Still stuck on anything? **Reply to your welcome email** with a screenshot — priority support
-  will get you sorted.
+- Instant answers: **helpvault.theaifreedommachine.com**
+- A human: reply to the welcome email — it goes straight to Ash, usually answered within one
+  business day.

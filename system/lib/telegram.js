@@ -3,6 +3,20 @@
 
 const https = require('https');
 
+// Parse one value from a .env line. Handles the three ways a hand-edited (or Windows-saved) .env
+// goes wrong: a trailing "# comment" after the value, surrounding quotes, and the invisible \r a
+// Windows editor leaves at the end of every line (which Node rejects inside an HTTP header).
+function parseEnvValue(raw) {
+  let v = String(raw || '').replace(/\r/g, '').trim();
+  if ((v.startsWith('"') && v.endsWith('"') && v.length >= 2) || (v.startsWith("'") && v.endsWith("'") && v.length >= 2)) {
+    return v.slice(1, -1);
+  }
+  if (v.startsWith('#')) return ''; // "KEY=   # explanation" means the key is blank
+  const hash = v.search(/\s#/); // an inline comment needs whitespace before the #
+  if (hash !== -1) v = v.slice(0, hash);
+  return v.trim();
+}
+
 function loadEnv() {
   // Tiny .env reader so we don't need an extra dependency.
   const fs = require('fs');
@@ -10,9 +24,12 @@ function loadEnv() {
   const envPath = path.join(__dirname, '..', '..', '.env');
   const out = {};
   if (fs.existsSync(envPath)) {
-    for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
-      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
-      if (m) out[m[1]] = m[2];
+    const text = fs.readFileSync(envPath, 'utf8').replace(/^﻿/, ''); // Notepad can add a BOM
+    for (const line of text.split(/\r?\n/)) {
+      const m = line.match(/^\s*(?:export\s+)?([A-Z0-9_]+)\s*=(.*)$/);
+      if (!m) continue;
+      const v = parseEnvValue(m[2]);
+      if (v !== '') out[m[1]] = v; // blank = not set, so "X || default" fallbacks work everywhere
     }
   }
   return out;
@@ -40,10 +57,12 @@ function sendTelegram(text, env) {
       res.on('data', (d) => (body += d));
       res.on('end', () => {
         const ok = res.statusCode === 200;
-        if (!ok) console.log(`Telegram error (${res.statusCode}): ${body}`);
+        // No raw JSON body: the owner reads this in a log, and the status code is enough for the assistant.
+        if (!ok) console.log(`Phone message not sent (Telegram status ${res.statusCode}) — Telegram rejected the bot token or chat ID; fix it on the connect page.`);
         resolve(ok);
       });
     });
+    req.setTimeout(30000, () => req.destroy(new Error('timed out after 30s'))); // a stalled connection must not hang a scheduled job
     req.on('error', (err) => {
       console.log(`Telegram request failed: ${err.message}`);
       resolve(false);
@@ -53,4 +72,4 @@ function sendTelegram(text, env) {
   });
 }
 
-module.exports = { sendTelegram, loadEnv };
+module.exports = { sendTelegram, loadEnv, parseEnvValue };

@@ -1,5 +1,5 @@
 # Chart of Accounts — Starter (for a digital / online business)
-*A sensible, generic starting point the Finance Agent customizes to the user's business and country.
+*A sensible, generic starting point the Finance Assistant customizes to the user's business and country.
 This is a template, NOT anyone's real books. Categories and tax treatment vary by country and
 business structure — always confirm with the user's accountant.*
 
@@ -45,5 +45,5 @@ maintains. The goal: every transaction has an obvious home, and the P&L tells a 
 ---
 
 > Tax treatment (what's deductible, how much, depreciation, sales-tax obligations) **depends on the
-> user's country and business structure** — the Finance Agent always pairs this with the disclaimer
+> user's country and business structure** — the Finance Assistant always pairs this with the disclaimer
 > and points anything that affects filing to a qualified professional.

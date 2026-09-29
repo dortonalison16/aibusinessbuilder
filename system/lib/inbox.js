@@ -4,7 +4,7 @@
 // nothing. Replies go out through lib/email.js only after the seller approves them.
 //
 // Requires GMAIL_USER + GMAIL_APP_PASSWORD in .env (an APP password, not their normal Google
-// password — see setup-connections step 6). Works with any IMAP host via IMAP_HOST/IMAP_PORT.
+// password — saved through the Gmail card on the connect page). Works with any IMAP host via IMAP_HOST/IMAP_PORT.
 
 const { loadEnv } = require('./telegram');
 
@@ -22,7 +22,8 @@ function config(env) {
   const e = env || loadEnv();
   return {
     user: e.GMAIL_USER || e.EMAIL_USER,
-    pass: e.GMAIL_APP_PASSWORD,
+    // A non-Gmail inbox (IMAP_HOST set) usually shares the SMTP login saved on the email card.
+    pass: e.GMAIL_APP_PASSWORD || (e.IMAP_HOST ? e.EMAIL_PASS : undefined),
     host: e.IMAP_HOST || 'imap.gmail.com',
     port: Number(e.IMAP_PORT || 993),
   };
@@ -38,7 +39,7 @@ function isConfigured(env) {
 // dragging entire threads into context.
 async function recent({ limit = 15, unreadOnly = false, env } = {}) {
   if (!isConfigured(env)) {
-    return { ok: false, reason: 'GMAIL_USER / GMAIL_APP_PASSWORD not set in .env — run the customer-service email step in setup-connections.' };
+    return { ok: false, reason: 'GMAIL_USER / GMAIL_APP_PASSWORD not set yet — add them on the Gmail card of the connect page (ask your assistant to open the connect page).' };
   }
   const ImapFlow = getImapFlow();
   if (!ImapFlow) {
@@ -104,13 +105,27 @@ async function body({ uid, env } = {}) {
     await client.connect();
     const lock = await client.getMailboxLock('INBOX');
     try {
-      const msg = await client.fetchOne(String(uid), { source: true }, { uid: true });
+      const msg = await client.fetchOne(String(uid), { bodyStructure: true, envelope: true }, { uid: true });
       if (!msg) return { ok: false, reason: 'message not found' };
-      const raw = msg.source.toString('utf8');
-      // Strip headers — the assistant only needs what the customer actually wrote.
-      const split = raw.indexOf('\r\n\r\n');
-      const text = (split > -1 ? raw.slice(split + 4) : raw).replace(/=\r\n/g, '').slice(0, 6000);
-      return { ok: true, text };
+      // Find the plain-text part (fall back to HTML) and let imapflow DECODE it — raw MIME is often
+      // base64 or quoted-printable, which reads as gibberish.
+      const parts = [];
+      (function walk(node) {
+        if (!node) return;
+        if (node.childNodes) node.childNodes.forEach(walk);
+        else parts.push(node);
+      })(msg.bodyStructure);
+      const pick = parts.find((p) => p.type === 'text/plain') || parts.find((p) => p.type === 'text/html');
+      let text = '';
+      if (pick) {
+        const { content } = await client.download(String(uid), pick.part || '1', { uid: true });
+        const chunks = [];
+        for await (const ch of content) chunks.push(ch);
+        text = Buffer.concat(chunks).toString('utf8');
+        if (pick.type === 'text/html') text = text.replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+      }
+      const env_ = msg.envelope || {};
+      return { ok: true, text: text.trim().slice(0, 6000), subject: env_.subject || '', messageId: env_.messageId || '' };
     } finally { lock.release(); }
   } catch (e) {
     return { ok: false, reason: e.message || String(e) };

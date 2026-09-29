@@ -15,7 +15,10 @@
     "ads-check": "node meta-ads.js check",
     "ads-monitor": "node meta-ads.js monitor",
     "content-research": "node content-research.js",
-    "finance-report": "node finance-report.js"
+    "finance-report": "node finance-report.js",
+    "weekly-content": "node weekly-content.js",
+    "health-check": "node health-check.js",
+    "ads-upload": "node meta-ads.js upload"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -25,5 +28,8 @@
   },
   "optionalDependencies": {
     "imapflow": "^1.0.164"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

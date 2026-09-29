@@ -4,7 +4,11 @@ const https = require('https');
 const { loadEnv } = require('./telegram');
 
 const GRAPH = 'graph.facebook.com';
-const VERSION = 'v21.0';
+const GRAPH_VIDEO = 'graph-video.facebook.com'; // Meta's host for video uploads
+// Meta retires each Graph API version ~2 years after release (v21 dies Jan 2027). Default to a
+// long-lived version; META_GRAPH_VERSION in .env overrides it without a code change.
+const DEFAULT_VERSION = 'v24.0';
+const VERSION = (loadEnv().META_GRAPH_VERSION || DEFAULT_VERSION).replace(/^(?!v)/, 'v');
 
 function graphPost(path, params) {
   const body = new URLSearchParams(params).toString();
@@ -25,6 +29,7 @@ function graphPost(path, params) {
         resolve({ ok, status: res.statusCode, data: json, error: json && json.error && json.error.message });
       });
     });
+    req.setTimeout(120000, () => req.destroy(new Error('timed out after 120s'))); // a stalled connection must not hang a scheduled job
     req.on('error', (err) => resolve({ ok: false, status: 0, error: err.message }));
     req.write(body);
     req.end();
@@ -58,7 +63,21 @@ async function postInstagramPhoto({ imageUrl, caption }, env) {
   const create = await graphPost(`${e.IG_USER_ID}/media`, { image_url: imageUrl, caption: caption || '', access_token: e.META_PAGE_TOKEN });
   if (!create.ok) return create;
   const creationId = create.data.id;
+  const ready = await waitForContainer(creationId, e, 10);
+  if (!ready.ok) return ready;
   return graphPost(`${e.IG_USER_ID}/media_publish`, { creation_id: creationId, access_token: e.META_PAGE_TOKEN });
+}
+
+// Instagram story (image). Stories take no caption.
+async function postInstagramStory({ imageUrl }, env) {
+  const e = env || loadEnv();
+  if (!e.IG_USER_ID) return { ok: false, error: 'No IG_USER_ID set.' };
+  if (!imageUrl) return { ok: false, error: 'Instagram needs a public image URL.' };
+  const create = await graphPost(`${e.IG_USER_ID}/media`, { media_type: 'STORIES', image_url: imageUrl, access_token: e.META_PAGE_TOKEN });
+  if (!create.ok) return create;
+  const ready = await waitForContainer(create.data.id, e, 10);
+  if (!ready.ok) return ready;
+  return graphPost(`${e.IG_USER_ID}/media_publish`, { creation_id: create.data.id, access_token: e.META_PAGE_TOKEN });
 }
 
 // ── Carousels & video (multi-step / multipart) ─────────────────────────────
@@ -71,13 +90,14 @@ function graphGet(path, env) {
       let d = ''; res.on('data', (c) => (d += c));
       res.on('end', () => { let j = null; try { j = JSON.parse(d); } catch (_) {} resolve({ ok: res.statusCode === 200 && j && !j.error, data: j, error: j && j.error && j.error.message }); });
     });
+    req.setTimeout(60000, () => req.destroy(new Error('timed out after 60s'))); // a stalled connection must not hang a scheduled job
     req.on('error', (err) => resolve({ ok: false, error: err.message }));
     req.end();
   });
 }
 
 // multipart/form-data POST (for uploading local photos/videos to Facebook).
-function graphMultipart(pathName, fields, file) {
+function graphMultipart(pathName, fields, file, host = GRAPH) {
   const boundary = '----aibBoundary' + Date.now();
   const head = [];
   for (const [k, v] of Object.entries(fields)) {
@@ -89,12 +109,13 @@ function graphMultipart(pathName, fields, file) {
   const body = Buffer.concat([...head, fileBuf, tail]);
   return new Promise((resolve) => {
     const req = https.request({
-      hostname: GRAPH, path: `/${VERSION}/${pathName}`, method: 'POST',
+      hostname: host, path: `/${VERSION}/${pathName}`, method: 'POST',
       headers: { 'Content-Type': `multipart/form-data; boundary=${boundary}`, 'Content-Length': body.length },
     }, (res) => {
       let d = ''; res.on('data', (c) => (d += c));
       res.on('end', () => { let j = null; try { j = JSON.parse(d); } catch (_) {} resolve({ ok: res.statusCode === 200 && j && !j.error, data: j, error: j && j.error && j.error.message }); });
     });
+    req.setTimeout(600000, () => req.destroy(new Error('timed out after 600s'))); // a stalled connection must not hang a scheduled job
     req.on('error', (err) => resolve({ ok: false, error: err.message }));
     req.write(body); req.end();
   });
@@ -114,10 +135,30 @@ async function postFacebookMultiPhoto({ imagePaths, caption }, env) {
   return graphPost(`${e.META_PAGE_ID}/feed`, params);
 }
 
+// Facebook single photo straight from a local file (no image hosting needed).
+async function postFacebookLocalPhoto({ imagePath, caption }, env) {
+  const e = env || loadEnv();
+  const isJpg = /.jpe?g$/i.test(imagePath);
+  return graphMultipart(`${e.META_PAGE_ID}/photos`, { caption: caption || '', access_token: e.META_PAGE_TOKEN }, { field: 'source', path: imagePath, filename: isJpg ? 'img.jpg' : 'img.png', contentType: isJpg ? 'image/jpeg' : 'image/png' });
+}
+
 // Facebook video (reel/clip): direct multipart upload of the local MP4.
 async function postFacebookVideo({ videoPath, caption }, env) {
   const e = env || loadEnv();
-  return graphMultipart(`${e.META_PAGE_ID}/videos`, { description: caption || '', access_token: e.META_PAGE_TOKEN }, { field: 'source', path: videoPath, filename: 'reel.mp4', contentType: 'video/mp4' });
+  return graphMultipart(`${e.META_PAGE_ID}/videos`, { description: caption || '', access_token: e.META_PAGE_TOKEN }, { field: 'source', path: videoPath, filename: 'reel.mp4', contentType: 'video/mp4' }, GRAPH_VIDEO);
+}
+
+// Instagram must finish processing a media container before it can be published; publishing too
+// early fails with "media is not ready". Polls status_code until FINISHED (or gives up cleanly).
+async function waitForContainer(id, e, tries = 20, everyMs = 6000) {
+  for (let i = 0; i < tries; i++) {
+    const st = await graphGet(`${id}?fields=status_code&access_token=${encodeURIComponent(e.META_PAGE_TOKEN)}`, e);
+    const code = st.ok && st.data && st.data.status_code;
+    if (code === 'FINISHED') return { ok: true };
+    if (code === 'ERROR' || code === 'EXPIRED') return { ok: false, error: `Instagram couldn't process this media (${code}).` };
+    await new Promise((r) => setTimeout(r, i === 0 ? 2000 : everyMs));
+  }
+  return { ok: false, error: 'Instagram was still processing the media after several minutes — it will be retried next run.' };
 }
 
 // Instagram carousel: each image must already be a PUBLIC URL (host them first).
@@ -132,6 +173,8 @@ async function postInstagramCarousel({ imageUrls, caption }, env) {
   }
   const container = await graphPost(`${e.IG_USER_ID}/media`, { media_type: 'CAROUSEL', children: children.join(','), caption: caption || '', access_token: e.META_PAGE_TOKEN });
   if (!container.ok) return container;
+  const ready = await waitForContainer(container.data.id, e, 10);
+  if (!ready.ok) return ready;
   return graphPost(`${e.IG_USER_ID}/media_publish`, { creation_id: container.data.id, access_token: e.META_PAGE_TOKEN });
 }
 
@@ -142,19 +185,16 @@ async function postInstagramReel({ videoUrl, caption }, env) {
   if (!videoUrl) return { ok: false, error: 'Instagram reels need a public video URL (video hosting).' };
   const container = await graphPost(`${e.IG_USER_ID}/media`, { media_type: 'REELS', video_url: videoUrl, caption: caption || '', access_token: e.META_PAGE_TOKEN });
   if (!container.ok) return container;
-  // Poll container status (IG must finish processing the video before publish).
-  for (let i = 0; i < 20; i++) {
-    const st = await graphGet(`${container.data.id}?fields=status_code&access_token=${e.META_PAGE_TOKEN}`, e);
-    if (st.ok && st.data && st.data.status_code === 'FINISHED') break;
-    if (st.ok && st.data && st.data.status_code === 'ERROR') return { ok: false, error: 'IG video processing failed.' };
-    await new Promise((r) => setTimeout(r, 6000));
-  }
+  // IG must finish processing the video before publish — never publish a half-processed reel.
+  const ready = await waitForContainer(container.data.id, e, 40);
+  if (!ready.ok) return ready;
   return graphPost(`${e.IG_USER_ID}/media_publish`, { creation_id: container.data.id, access_token: e.META_PAGE_TOKEN });
 }
 
 module.exports = {
-  metaConfigured, postFacebookText, postFacebookPhoto, postInstagramPhoto,
-  postFacebookMultiPhoto, postFacebookVideo, postInstagramCarousel, postInstagramReel,
+  metaConfigured, postFacebookText, postFacebookPhoto, postFacebookLocalPhoto, postInstagramPhoto,
+  postInstagramStory, postFacebookMultiPhoto, postFacebookVideo, postInstagramCarousel, postInstagramReel,
+  waitForContainer, VERSION,
 };
 
 // ── Honest limits (surface these to the user, don't hide them) ──────────────

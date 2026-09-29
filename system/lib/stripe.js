@@ -22,14 +22,18 @@ function stripeGet(path, env) {
         resolve({ ok: res.statusCode === 200, status: res.statusCode, data: json, raw: body });
       });
     });
+    req.setTimeout(60000, () => req.destroy(new Error('timed out after 60s'))); // a stalled connection must not hang a scheduled job
     req.on('error', (err) => resolve({ ok: false, status: 0, error: err.message, data: null }));
     req.end();
   });
 }
 
 // Format cents → "$12.34" (or other currency code).
+// Stripe's zero-decimal currencies are already in whole units (¥500 is 500, not 50000).
+const ZERO_DECIMAL = new Set(['bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw', 'mga', 'pyg', 'rwf', 'ugx', 'vnd', 'vuv', 'xaf', 'xof', 'xpf']);
 function money(amount, currency) {
-  const v = (Number(amount || 0) / 100).toFixed(2);
+  const zero = ZERO_DECIMAL.has(String(currency || '').toLowerCase());
+  const v = zero ? String(Math.round(Number(amount || 0))) : (Number(amount || 0) / 100).toFixed(2);
   if (!currency || currency.toLowerCase() === 'usd') return `$${v}`;
   return `${v} ${String(currency).toUpperCase()}`;
 }

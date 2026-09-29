@@ -1,4 +1,4 @@
-// Weekly finance report to the seller's phone (Automated version only).
+// Weekly finance report to the seller's phone (Auto-Pilot edition only).
 //
 //   node system/finance-report.js
 //   node system/schedule-automation.js add --name finance-report --script finance-report.js --freq weekly --day Fri
@@ -9,7 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { guardOrExit } = require('./lib/working-hours');
+const { weeklyGuardOrExit, markRan } = require('./lib/working-hours');
 const { stripeGet, money } = require('./lib/stripe');
 const { sendTelegram } = require('./lib/telegram');
 const { ROOT } = require('./lib/config');
@@ -32,12 +32,27 @@ async function revenueBetween(fromMs, toMs) {
     if (!(res.data && res.data.has_more) || !batch.length) break;
     startingAfter = batch[batch.length - 1].id;
   }
-  const good = charges.filter((c) => c.status === 'succeeded' && !c.refunded);
-  const refunded = charges.filter((c) => c.refunded);
+  // Gross counts every successful payment (refunded ones too); refunds (full or partial) are then
+  // subtracted once for net. (Excluding refunded charges from gross AND subtracting them again used
+  // to count every refund twice.)
+  const good = charges.filter((c) => c.status === 'succeeded');
+  const refunded = good.filter((c) => c.refunded || Number(c.amount_refunded) > 0);
   const gross = good.reduce((s, c) => s + (c.amount || 0), 0);
-  const refunds = refunded.reduce((s, c) => s + (c.amount_refunded || c.amount || 0), 0);
+  const refunds = refunded.reduce((s, c) => s + (Number(c.amount_refunded) || (c.refunded ? c.amount : 0) || 0), 0);
   const currency = (good[0] && good[0].currency) || (charges[0] && charges[0].currency) || 'usd';
-  return { ok: true, gross, refunds, count: good.length, refundCount: refunded.length, currency };
+  // Stripe accounts can take several currencies; the totals above add the raw amounts together, so
+  // the report labels that plainly instead of pretending it all came in as one currency.
+  const currencies = [...new Set(good.map((c) => String(c.currency || '').toLowerCase()).filter(Boolean))];
+  return { ok: true, gross, refunds, count: good.length, refundCount: refunded.length, currency, currencies };
+}
+
+// An expense is logged as a bare day ("2026-10-03"), which new Date() reads as UTC midnight — 10am
+// in Sydney, 8pm the evening BEFORE in Toronto — so a "today" expense could land outside (or an
+// 8-day-old one inside) the week. Same rule as check-sales.js --since: a bare day is midnight on
+// the owner's clock. Anything else (a full timestamp) is parsed as-is. Returns ms, or NaN.
+function parseLocalDate(s) {
+  const m = String(s || '').trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime() : new Date(s).getTime();
 }
 
 // Optional local expense log, kept by the Finance Assistant. Shape: [{date,amount,category,note}]
@@ -45,10 +60,10 @@ async function revenueBetween(fromMs, toMs) {
 function expensesBetween(fromMs, toMs) {
   try {
     if (!fs.existsSync(EXPENSES)) return null;
-    const rows = JSON.parse(fs.readFileSync(EXPENSES, 'utf8'));
+    const rows = JSON.parse(fs.readFileSync(EXPENSES, 'utf8').replace(/^﻿/, ''));
     if (!Array.isArray(rows)) return null;
     const inWindow = rows.filter((r) => {
-      const t = new Date(r.date).getTime();
+      const t = parseLocalDate(r.date);
       return Number.isFinite(t) && t >= fromMs && t <= toMs;
     });
     const total = inWindow.reduce((s, r) => s + (Number(r.amount) || 0), 0);
@@ -71,7 +86,7 @@ function trend(now, prev) {
 }
 
 async function run() {
-  guardOrExit('finance-report');
+  weeklyGuardOrExit('finance-report');
 
   const now = Date.now();
   const thisWeek = await revenueBetween(now - 7 * DAY, now);
@@ -90,10 +105,14 @@ async function run() {
   const net = thisWeek.gross - thisWeek.refunds;
   const exp = expensesBetween(now - 7 * DAY, now);
 
-  const lines = ['📊 Your week in numbers', ''];
-  lines.push(`Revenue: ${money(thisWeek.gross, cur)}${lastWeek.ok ? trend(thisWeek.gross, lastWeek.gross) : ''}`);
-  lines.push(`Sales:   ${thisWeek.count}`);
-  if (thisWeek.count) lines.push(`Average order: ${money(Math.round(thisWeek.gross / thisWeek.count), cur)}`);
+  // This is the money view: every payment in the Stripe account (all products, any checkout), which
+  // can differ from the product-only sale count in the weekly digest — say so plainly.
+  const lines = ['📊 Your week in numbers (all payments in your Stripe account)', ''];
+  const mixed = (thisWeek.currencies || []).length > 1;
+  lines.push(`Revenue: ${money(thisWeek.gross, cur)}${mixed ? ' (mixed currencies)' : ''}${lastWeek.ok ? trend(thisWeek.gross, lastWeek.gross) : ''}`);
+  if (mixed) lines.push(`(Payments came in ${thisWeek.currencies.map((c) => c.toUpperCase()).join(' + ')}; the totals add the amounts as-is, labeled in ${cur.toUpperCase()}.)`);
+  lines.push(`Payments: ${thisWeek.count}`);
+  if (thisWeek.count) lines.push(`Average payment: ${money(Math.round(thisWeek.gross / thisWeek.count), cur)}`);
 
   if (thisWeek.refundCount) {
     lines.push('');
@@ -129,9 +148,10 @@ async function run() {
   const out = lines.join('\n');
   console.log('\n' + out);
   await sendTelegram(out);
+  markRan('finance-report');
 }
 
-module.exports = { run };
+module.exports = { run, expensesBetween, parseLocalDate };
 
 if (require.main === module) {
   run().catch((err) => console.log(`Finance report hit an error (will retry next week): ${err.message}`));

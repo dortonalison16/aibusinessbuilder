@@ -1,4 +1,4 @@
-// Weekly content research (Automated version only).
+// Weekly content research (Auto-Pilot edition only).
 //
 //   node system/content-research.js
 //
@@ -10,13 +10,13 @@
 // no second subscription, nothing extra to install. If there's no key it exits quietly — the buyer
 // just plans content interactively instead, exactly as before.
 //
-// Schedule it to run BEFORE the writer:
-//   node system/schedule-automation.js add --name content-research --script content-research.js --freq weekly --day Sun
-//   node system/schedule-automation.js add --name content-write    --script auto-content.js     --freq weekly --day Mon
+// It runs as the first step of the one weekly content job (weekly-content.js — research, then write,
+// then render), so the writer always sees fresh research. Scheduled as that single job:
+//   node system/schedule-automation.js add --name content-week --script weekly-content.js --freq weekly --day Mon --offset 15
 
 const fs = require('fs');
 const path = require('path');
-const { ROOT, getConfigValue } = require('./lib/config');
+const { ROOT, getConfigValue, getConfigSection, getConfigField } = require('./lib/config');
 const { guardOrExit } = require('./lib/working-hours');
 const { askClaude, extractJson, hasKey } = require('./lib/anthropic');
 
@@ -24,12 +24,12 @@ const CONTENT_DIR = path.join(ROOT, 'Content');
 const OUT = path.join(CONTENT_DIR, 'research.json');
 
 function buildPrompt() {
-  const audience = getConfigValue('Audience', '');
-  const product = getConfigValue('Product Topic', '') || getConfigValue('Name', '');
-  const promise = getConfigValue('Transformation', '');
-  const niche = [product, audience].filter(Boolean).join(' for ');
+  const audience = getConfigSection('Audience', '');
+  const product = getConfigSection('Product Topic', '') || getConfigValue('Name', '');
+  const promise = getConfigField('Transformation', 'One-liner', '') || getConfigSection('Transformation', '');
+  const niche = [product, audience].filter(Boolean).map((s) => s.split('\n')[0]).join(' for ');
 
-  return `You are a content strategist doing this week's research for a faceless digital-product business.
+  return `You are a content strategist doing this week's research for a small digital-product business.
 
 THE BUSINESS
 - Sells: ${product || '(not set yet)'}
@@ -37,7 +37,7 @@ THE BUSINESS
 - Promise: ${promise || '(not set yet)'}
 
 Search the web for what is working in short-form social content RIGHT NOW for this niche${niche ? ` (${niche})` : ''}.
-Look for recent posts, formats and angles — prioritise the last 30-60 days. Then answer honestly,
+Look for recent posts, formats and angles — prioritize the last 30-60 days. Then answer honestly,
 including where something has gone stale.
 
 Return ONLY valid JSON in exactly this shape, no commentary:
@@ -49,14 +49,14 @@ Return ONLY valid JSON in exactly this shape, no commentary:
   ],
   "goingStale": [ "format or angle that's overused right now, and why" ],
   "hooks": [ "5-8 specific opening lines that would stop a scroll for THIS audience" ],
-  "formats": [ { "format": "e.g. text-over-broll list", "note": "why it suits a faceless brand" } ],
+  "formats": [ { "format": "e.g. text-over-broll list", "note": "why it works for this audience right now" } ],
   "avoid": [ "anything that reads as spam, breaks platform rules, or is overdone" ],
   "sources": [ "brief note of what you found, one line each" ]
 }
 
 RULES — these matter more than being impressive:
 - NO income claims, earnings figures, or "make $X" angles. Ever. They get accounts banned and they aren't honest.
-- Nothing requiring the owner's face or voice on camera — this is a faceless brand.
+- Favor formats that work without the owner on camera (text-on-screen, b-roll, carousels); the owner may film occasionally or use an AI avatar.
 - Specific over clever. "The 10pm laptop moment" beats "relatable content".
 - If the search turns up little for this niche, say so in "sources" rather than inventing trends.
   An honest empty result is far more useful than a confident fabrication.`;
@@ -81,14 +81,17 @@ async function run() {
     return;
   }
 
-  const data = extractJson(res.text);
-  if (!data) {
+  const data = extractJson(res.text, 'object');
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
     console.log('Could not read the research response as JSON — leaving the previous research file alone.');
     return;
   }
 
-  // Stamp it so the writer can tell how fresh this is, and so stale research is obvious.
-  data.researchedOn = data.researchedOn || new Date().toISOString().slice(0, 10);
+  // Stamp it with TODAY (local date) so the writer can tell how fresh this is. Never trust the model's
+  // own date: it often guesses a past year (or echoes "YYYY-MM-DD"), and the writer then drops
+  // "stale" research every single week.
+  const d = new Date();
+  data.researchedOn = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   fs.writeFileSync(OUT, JSON.stringify(data, null, 2));
 
   const n = (k) => (Array.isArray(data[k]) ? data[k].length : 0);

@@ -1,5 +1,5 @@
 # Year-End — Accountant Handoff Checklist
-*What the Finance Agent helps the user gather and organize so their accountant's job (and bill) is
+*What the Finance Assistant helps the user gather and organize so their accountant's job (and bill) is
 smaller. Generic/white-label — adapt to the user's country and structure. Always paired with the
 disclaimer; the accountant makes the final calls.*
 
@@ -7,7 +7,7 @@ disclaimer; the accountant makes the final calls.*
 Hand the accountant a clean, organized package — not a shoebox of receipts. The more organized it
 is, the less they charge and the fewer questions come back.
 
-## The package to assemble (in a dated `Finances/Year-End-[YEAR]/` folder)
+## The package to assemble (in a dated `Finance/Year-End-[YEAR]/` folder)
 
 ### 1. The numbers
 - [ ] **Profit & Loss** for the full year (income and expenses by category)
@@ -38,7 +38,7 @@ A one-page plain-English summary the agent writes:
 - **Open questions for the accountant** (the agent lists the judgment calls — e.g., "is the
   laptop an expense or an asset?", "is X meal deductible?") so the accountant answers them once
 
-## How the Finance Agent runs this
+## How the Finance Assistant runs this
 1. Pull/organize the year's transactions (from QBO or the spreadsheet).
 2. Produce the P&L + ledger + summary.
 3. Build the checklist above, marking what's done and what's still needed from the user.

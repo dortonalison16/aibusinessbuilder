@@ -11,7 +11,7 @@ function statePath(name) {
 
 function readSet(name) {
   try {
-    const arr = JSON.parse(fs.readFileSync(statePath(name), 'utf8'));
+    const arr = JSON.parse(fs.readFileSync(statePath(name), 'utf8').replace(/^﻿/, ''));
     return new Set(Array.isArray(arr) ? arr : []);
   } catch (_) {
     return new Set();
