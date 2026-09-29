@@ -45,3 +45,10 @@ Mode: Automated (Claude Code)
 - DECISION: Scrolling to Selling reshaped (option B). Affiliate links only as a small side chapter. Chapters: 1 find what you can package; 2 choose/build first product; 3 page, checkout, delivery; 4 faceless content that sells; 5 affiliate links as side income; 6 next step: Setup Kit.
 - Price: ~$37 (test $27-47)
 - Kit vision (Product #2/core): user "brain dumps" background and knowledge, and the tool helps repackage it into an offer OR create their own digital products. Must be easier to set up than the kit the owner bought.
+
+## Brand & Look (draft, owner wants to review then maybe change)
+- Feeling: grounded and feminine (D), earthy, a little "bloom"
+- Palette: forest green #2F4A3A, deep green #1F3327, blush pink #E8B4B8, soft cream #F7EFE8
+- Fonts: elegant serif titles (Fraunces) + clean sans body (Inter)
+- Logo: none. Owner has an unloved ChatGPT-made one; use text wordmark "Grit & Bloom" for now.
+- Preview: Product/brand-preview.png
