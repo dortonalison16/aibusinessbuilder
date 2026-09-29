@@ -25,3 +25,10 @@ Mode: Automated (Claude Code)
 - Audience status: starting from zero, no social, no warm list. Competitors: Katie Floyd, Maria Wendt.
 - Idea: a string/web of digital products run with ads, all auto-delivered, test first.
 - Interested in a lower-priced "how to set up your own automated business with AI" product (owner found a ~$300 tool with a stepping-stone offer confusing to set up). NOTE: the Auto-Pilot kit in this repo belongs to its creator; do not resell or rebrand it. Build original material.
+
+## Offer Validation - Verdict
+- Verdict: Refine -> Go (Phase 1)
+- Ad testing budget: up to $5k available; staged spend with stop rules (see plan)
+- Phase 1: faceless digital product ladder (entry ~$27 + bump + upsell), auto-delivered, Meta ads
+- Phase 2: faceless membership ($47-97/mo) with guest experts. Phase 3: sprint, then DFY with a hired closer.
+- Next step: guided-setup to build the first product
