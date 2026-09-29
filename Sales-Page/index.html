@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrolling to Selling | Grit &amp; Bloom</title>
+<style>
+@font-face{font-family:'Fraunces';font-weight:400;font-style:normal;src:url('fonts/fraunces-latin-400-normal.woff2') format('woff2');}
+@font-face{font-family:'Fraunces';font-weight:400;font-style:italic;src:url('fonts/fraunces-latin-400-italic.woff2') format('woff2');}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;src:url('fonts/fraunces-latin-600-normal.woff2') format('woff2');}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:italic;src:url('fonts/fraunces-latin-600-italic.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-weight:400;src:url('fonts/inter-latin-400-normal.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-weight:600;src:url('fonts/inter-latin-600-normal.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-weight:700;src:url('fonts/inter-latin-700-normal.woff2') format('woff2');}
+:root{--sage:#6F8266;--deep:#3E4E38;--blush:#F6DCD8;--cream:#F7EFE8;--paper:#FBF8F4;--ink:#2F3A2F;--muted:#6B7768;
+--display:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+h1,h2{font-family:var(--display);font-weight:600;color:var(--deep);line-height:1.12;letter-spacing:-.01em}
+h2{font-size:32px;margin:0 0 14px}
+p{margin:0 0 14px}
+section{padding:56px 0}
+.hero{background:linear-gradient(160deg,#8A9C80 0%,#6F8266 55%,#56684F 100%);color:#fff;padding:64px 0 72px;text-align:center}
+.brand{letter-spacing:.28em;text-transform:uppercase;font-size:12px;font-weight:700;color:var(--blush);margin-bottom:26px}
+.hero h1{color:#fff;font-size:44px;margin:0 0 18px}
+.hero h1 em{color:var(--blush)}
+.hero p.sub{font-size:19px;color:#F4F7F1;max-width:560px;margin:0 auto 28px}
+.btn{display:inline-block;background:var(--blush);color:var(--deep);font-weight:700;padding:17px 34px;border-radius:999px;text-decoration:none;font-size:17px;box-shadow:0 8px 22px rgba(0,0,0,.18)}
+.btn:hover{transform:translateY(-1px)}
+.btn.dark{background:var(--sage);color:#fff}
+.note{font-size:13px;opacity:.85;margin-top:14px}
+.alt{background:var(--cream)}
+.problem li,.get li,.incl li{margin:10px 0}
+ul{padding-left:0;list-style:none;margin:0 0 14px}
+ul li{position:relative;padding-left:30px}
+ul li::before{content:'';position:absolute;left:4px;top:.62em;width:10px;height:10px;border-radius:50%;background:var(--sage);box-shadow:0 0 0 4px #E3E9DE}
+.doubts li::before{background:var(--blush);box-shadow:0 0 0 4px #F3E7E4}
+.quote{font-family:var(--display);font-style:italic;font-size:22px;color:var(--deep);border-left:4px solid var(--blush);padding-left:18px;margin:22px 0}
+.card{background:#fff;border:1px solid #E4E9DF;border-radius:18px;padding:22px 24px;margin:18px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.two .card h3{margin:0 0 8px;font-family:var(--display);color:var(--deep);font-size:20px}
+.price{background:var(--deep);color:#fff;border-radius:22px;padding:36px 28px;text-align:center}
+.price .amt{font-family:var(--display);font-size:64px;font-weight:600;line-height:1;color:#fff}
+.price .amt small{font-size:18px;color:var(--blush);font-family:var(--sans);font-weight:400;display:block;margin-top:6px}
+.price ul{text-align:left;max-width:420px;margin:22px auto}
+.price ul li::before{background:var(--blush);box-shadow:0 0 0 4px rgba(246,220,216,.25)}
+.guar{background:rgba(255,255,255,.08);border-radius:14px;padding:14px 18px;font-size:15px;margin-top:18px;color:#EEF2EA}
+details{background:#fff;border:1px solid #E4E9DF;border-radius:14px;padding:16px 20px;margin:10px 0}
+summary{cursor:pointer;font-weight:700;color:var(--deep)}
+details p{margin:10px 0 0;color:var(--ink)}
+footer{padding:36px 0 50px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:600px){.hero h1{font-size:34px}h2{font-size:27px}.two{grid-template-columns:1fr}body{font-size:16.5px}}
+</style></head>
+<body>
+
+<header class="hero"><div class="wrap">
+  <div class="brand">Grit &amp; Bloom</div>
+  <h1>Turn What You Already Know Into Your First <em>Digital Product</em></h1>
+  <p class="sub">A step-by-step guide for moms stuck in a 9–5 who want income they control, so they can be home more. No camera, no big following, no tech degree.</p>
+  <a class="btn" href="#buy">Get Scrolling to Selling for $37</a>
+  <div class="note">Instant PDF download · 7-day guarantee</div>
+</div></header>
+
+<section><div class="wrap">
+  <h2>You're already on your phone every day.</h2>
+  <p>You've seen other women building online businesses and wondered, <em>"Could I do that?"</em> Then the doubts show up:</p>
+  <ul class="doubts">
+    <li>"I don't even know what I'd sell."</li>
+    <li>"I don't have a following."</li>
+    <li>"I can't put myself on camera."</li>
+    <li>"I don't have time. I'm at work, then I'm with the kids."</li>
+  </ul>
+  <p>So you keep scrolling, and the 9–5 keeps taking the hours you'd rather spend at home.</p>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>You don't need a big idea. You need a simple one.</h2>
+  <p>Most beginner advice gets this wrong. You don't need a big audience or a big block of free time. You need to <strong>take what you already know, package it into one simple product, and put it in front of the right people.</strong> That's it.</p>
+  <div class="quote">"Your first product doesn't need to be your best work. It needs to help one specific person get one specific result."</div>
+  <p>The founder of Grit &amp; Bloom started in a work-from-home job at <strong>$19 an hour</strong> where being idle for five minutes earned a "ding." She was a teen mom with no degree. She built a path out, ran client success and operations for online businesses, and helped <strong>more than a thousand business owners</strong> get their own offers off the ground. Today she's a mom of five who runs operations for a multimillion-dollar company.</p>
+  <p>This guide is her method, made simple.</p>
+</div></section>
+
+<section><div class="wrap">
+  <h2>What you'll be able to do</h2>
+  <ul class="get">
+    <li><strong>Find your product idea</strong> from what you already know, with a 10-minute brain dump that pulls it out of your head.</li>
+    <li><strong>Choose one simple product</strong> with a scoring test, so you stop second-guessing.</li>
+    <li><strong>Write a promise people want</strong>, using a fill-in-the-blank formula and real examples.</li>
+    <li><strong>Set it up once</strong> with a page, checkout and automatic delivery, so it sells while you're at work or asleep.</li>
+    <li><strong>Get seen without your face</strong> using 5 faceless content types, hook formulas and a weekly rhythm that fits real life.</li>
+    <li><strong>Follow a 14-day launch plan</strong> so you always know what to do next.</li>
+  </ul>
+  <p style="text-align:center;margin-top:28px"><a class="btn dark" href="#buy">Yes, I want the guide</a></p>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>Is this for you?</h2>
+  <div class="two">
+    <div class="card"><h3>This is for you if…</h3><p>You're a mom with a 9–5 (or trying to leave one), you want a simple starting point, and you're willing to put in a few hours a week.</p></div>
+    <div class="card"><h3>This isn't for you if…</h3><p>You want overnight money with no effort, or a guarantee of income. Nobody can honestly offer that.</p></div>
+  </div>
+  <h2 style="margin-top:34px">Why you can trust it</h2>
+  <ul>
+    <li>Built by someone with <strong>4+ years</strong> inside the operations of well-known online businesses.</li>
+    <li>Shaped by work with <strong>1,000+ business owners</strong>.</li>
+    <li>Every chapter ends with <strong>one small action</strong>, so you always move forward.</li>
+  </ul>
+  <!-- TESTIMONIALS: add real buyer quotes here once you have your first buyers. -->
+</div></section>
+
+<section id="buy"><div class="wrap">
+  <div class="price">
+    <h2 style="color:#fff;margin-bottom:6px">Everything included</h2>
+    <ul>
+      <li>The full Scrolling to Selling guide (17 pages, instant PDF)</li>
+      <li>10-minute brain dump worksheet</li>
+      <li>3-question product test and one-sentence promise formula</li>
+      <li>Pricing guide for a first product</li>
+      <li>7-part sales page outline</li>
+      <li>5 faceless content types, content pillars and hook formulas</li>
+      <li>Affiliate side-income basics (done honestly)</li>
+      <li>14-day launch plan and a one-page cheat sheet</li>
+    </ul>
+    <div class="amt">$37<small>one-time payment · instant access</small></div>
+    <p style="margin:24px 0 0"><a class="btn" href="#CHECKOUT-LINK">Get Scrolling to Selling</a></p>
+    <div class="guar"><strong>7-day guarantee.</strong> Read it and try the first two chapters. If it isn't for you, email us within 7 days for a refund. No hassle.</div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>Questions</h2>
+  <details><summary>Do I need a following or an audience?</summary><p>No. The guide shows you how to start from zero, and you don't need to be on camera.</p></details>
+  <details><summary>I don't know what I'd sell. Is this for me?</summary><p>Yes. Chapter 1 is built for exactly this. You'll pull ideas out of your own experience.</p></details>
+  <details><summary>How much time will it take?</summary><p>Most people can work through it in about two weeks using a few hours a week. The 14-day plan breaks it into small daily steps.</p></details>
+  <details><summary>Do I need to be techy?</summary><p>No. Everything is beginner-friendly, and you can use free or low-cost tools.</p></details>
+  <details><summary>Will this make me money?</summary><p>We can't promise a specific income, and anyone who does is guessing. The guide gives you a real method and plan. Your results depend on your effort, your product and your market.</p></details>
+  <details><summary>How do I get it?</summary><p>Right after purchase, you'll get an email with your download link.</p></details>
+</div></section>
+
+<section><div class="wrap" style="text-align:center">
+  <h2>You could keep scrolling. Or you could start.</h2>
+  <p>Spend the next 14 days turning what you know into something that's yours. One small step today is worth more than a perfect plan next month.</p>
+  <p style="margin-top:24px"><a class="btn dark" href="#CHECKOUT-LINK">Get Scrolling to Selling for $37</a></p>
+</div></section>
+
+<footer><div class="wrap">
+  <p>© Grit &amp; Bloom. Results vary and no income is guaranteed. Some links in the guide are affiliate links.</p>
+</div></footer>
+</body></html>

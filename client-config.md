@@ -59,3 +59,4 @@ Mode: Automated (Claude Code)
 - Placeholder in Chapter 6: Setup Kit link "coming soon". Affiliate links still to collect.
 - Affiliate links collected (see affiliate-links.md): Skool, Systeme.io, Stan Store. Still needed: email tool, design tool (e.g. Canva), scheduler.
 - Product 1 v2: fixed cover, page breaks (each chapter on new page), real fonts embedded (Product/fonts). 17 pages.
+- Sales page v1 built: Sales-Page/index.html (+ sales-copy.md, preview PNGs). $37, 7-day guarantee (default, owner can change). Checkout button link is a placeholder (#CHECKOUT-LINK) until Systeme.io checkout exists. No testimonials yet.
