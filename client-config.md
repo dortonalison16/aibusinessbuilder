@@ -14,3 +14,14 @@ Mode: Automated (Claude Code)
 - Demand signals: not yet asked
 - Price they'd pay: not yet asked
 - Why this, not the alternative: not yet asked
+
+## Owner Constraints & Goals (from validation chat)
+- FACELESS brand: no personal face/name as the brand (drop "Alison in Progress" as the face). Automated as possible.
+- NO sales calls. Growth via paid ads (Meta), auto-delivered products.
+- Community/sprint ideas: paid guest speakers (sales, mindset), ~2 owner calls/month, hands-on Slack support in sprint. Later.
+- Dream: DFY "business in a box" from templates (needs a closer since no sales calls) - later.
+- First goal: $20k/month NET profit after expenses.
+- Background: director of ops at a multimillion-dollar online company; worked with multimillion-dollar agencies (NDAs - no specifics, don't cite).
+- Audience status: starting from zero, no social, no warm list. Competitors: Katie Floyd, Maria Wendt.
+- Idea: a string/web of digital products run with ads, all auto-delivered, test first.
+- Interested in a lower-priced "how to set up your own automated business with AI" product (owner found a ~$300 tool with a stepping-stone offer confusing to set up). NOTE: the Auto-Pilot kit in this repo belongs to its creator; do not resell or rebrand it. Build original material.
