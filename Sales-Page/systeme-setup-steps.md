@@ -29,7 +29,7 @@ Menu names in Systeme.io change now and then. If something looks different, look
    Headline and subhead > The problem > The turn (your story) > What you'll be able to do > Is this for you? > Everything included and price > FAQ > Final call to action.
 3. Use the colors above. Use a serif font for headlines and a clean sans-serif for body text.
 4. Add a button in the hero and near the price. Set each button to go to the **Order form** step.
-5. Add the guarantee text under the price: "7-day money-back guarantee. If Scrolling to Selling isn't what you hoped for, email us within 7 days of purchase and we'll refund you. No questions asked."
+5. Add the guarantee text under the price (copy it from `sales-copy.md`, section "Price + guarantee").
 6. Check the **mobile view** in the editor. Most visitors will be on phones.
 7. Add footer links to your **Privacy Policy**, **Terms**, and **Refund Policy** pages (see Part 8).
 

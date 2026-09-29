@@ -1,7 +1,7 @@
 # Sales Page Copy: Scrolling to Selling ($37)
 
 Brand: Grit & Bloom (faceless). Voice: warm, practical, no-nonsense.
-Guarantee used: 7-day money-back, no questions asked (owner chose to clarify). Buy button link: to be added (Systeme.io checkout).
+Guarantee used: 14-day action-based (owner's choice). Buy button link: to be added (Systeme.io checkout).
 
 ## Headline options (pick one)
 1. **Turn What You Already Know Into Your First Digital Product** (used on the page)
@@ -56,7 +56,7 @@ The founder of Grit & Bloom started in a work-from-home job at $19 an hour where
 
 ## Price + guarantee
 **$37**, one-time. Instant access.
-**7-day money-back guarantee:** If Scrolling to Selling isn't what you hoped for, email us within 7 days of purchase and we'll refund you. No questions asked.
+**14-day action-based guarantee:** Do the work in Chapters 1–3 (the brain dump, choosing your product, and writing your promise). If you've completed those action steps within 14 days and still don't have a product idea and a clear one-sentence promise, email us your completed work and we'll refund you in full. No calls.
 
 ## FAQ
 **Do I need a following or an audience?** No. The guide shows you how to start from zero, and you don't need to be on camera.
@@ -64,6 +64,7 @@ The founder of Grit & Bloom started in a work-from-home job at $19 an hour where
 **How much time will it take?** Most people can work through it in about two weeks using a few hours a week. The 14-day plan is broken into small daily steps.
 **Do I need to be techy?** No. Everything is beginner-friendly, and you can use free or low-cost tools.
 **Will this make me money?** We can't promise a specific income, and anyone who does is guessing. The guide gives you a real method and plan. Your results depend on your effort, your product and your market.
+**How does the guarantee work?** Work through the action steps at the end of Chapters 1, 2 and 3 within 14 days of buying. If you've done them and still don't have a product idea and a one-sentence promise, email us your completed worksheets and we'll refund you in full. Nobody has to get on a call.
 **How do I get it?** Right after purchase, you'll get an email with your download link.
 
 ## Final call to action
