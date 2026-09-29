@@ -1,7 +1,7 @@
 {
   "_comment": "When is your computer reliably ON and awake? Automations only get scheduled inside this window so they actually run. The assistant sets this with you during setup. Days use 3-letter codes: Mon Tue Wed Thu Fri Sat Sun.",
   "timezone": "local",
-  "days": ["Mon", "Tue", "Wed", "Thu"],
-  "start": "10:00",
-  "end": "16:00"
+  "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  "start": "12:00",
+  "end": "22:00"
 }
