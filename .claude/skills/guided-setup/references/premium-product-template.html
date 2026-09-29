@@ -1,0 +1,524 @@
+<!--
+  PREMIUM PRODUCT PDF TEMPLATE — the AI Freedom Machine house style.
+  FILLED EXAMPLE (a meal-prep guide). To build a buyer's product, keep the CSS + component
+  structure/classes; swap ONLY the brand tokens, fonts, content, and images.
+
+  1) BRAND TOKENS (:root) — from the buyer's palette (Section 7):
+       --brand (primary) · --brand-deep (darkest ink: cover panel + headings) · --accent (pop) ·
+       --tint (soft brand tint for callouts) · --tint-2 (soft accent tint for warnings)
+
+  2) FONTS — set --display (headings) + --sans (body) + the @import to match their "font feeling":
+       elegant/premium → Fraunces + Inter [default] · modern → Sora/Space Grotesk + Inter ·
+       friendly → Poppins + Nunito Sans · classic → Playfair Display + Lato
+
+  3) CONTENT COMPONENTS (all pre-styled premium):
+       .cover (bold photo cover — see #4) · .lead-block · .first (drop-cap wrapper) ·
+       .chapter (+.chapter-rule) · h3 · ul/ol · .callout (+.warn) · .pullquote · .action (checklist) · <table>
+
+  4) IMAGES — real photography is what makes this look premium. Save all images in `Product/images/`
+     and reference them RELATIVELY (embed, never hot-link a URL in the final PDF):
+       • THE COVER is a BOLD, magazine/cookbook-style cover: a bright, appetizing, on-topic HERO
+         PHOTO fills the top ~2/3 (`.cover-photo` background = `images/cover.jpg`) under a small
+         masthead, then a deep brand-ink panel holds the big title (with a turquoise→accent stripe).
+         Pick a striking, high-quality cover photo — this is the buyer's "book cover," make it POP.
+       • `.chapter-banner` → one wide banner per chapter (`images/chapter-1.jpg`, ...).
+       • `figure.fig` → inline image + caption (`images/figure-1.jpg`, ...). `.imrow` → a two-up row.
+     SOURCING: Auto-Pilot pulls relevant FREE stock (Pexels/Unsplash by keyword) or uses images the
+       buyer dropped in `Product/images/`, and embeds them. Co-Pilot places the slots and hands the
+       buyer the exact stock-search terms / AI-image prompts (Canva/OpenArt) to fill each.
+     Keep every image on-topic + on-brand — a meal-prep guide gets food/kitchen photos, etc.
+     NEVER leave an empty grey box or a broken image.
+
+  5) RENDER — HTML → PDF via headless Chrome (Puppeteer), A4, printBackground:true. **Load the page
+     with `page.goto('file://<path>')` (NOT setContent) so local `images/` files resolve.** Never pdfkit.
+-->
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ===== BRAND TOKENS (the only thing that changes per buyer) ===== */
+:root{
+  --brand:#00C2D1; --brand-deep:#0B2A33; --accent:#FF9F1C; --tint:#E9FBFC; --tint-2:#FFF6E9;
+  --paper:#ffffff; --body:#2B3A40; --muted:#6E8189; --line:#E3ECEE;
+  --display:'Fraunces', Georgia, serif; --sans:'Inter', system-ui, sans-serif;
+}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--sans);color:var(--body);font-size:11.5pt;line-height:1.62;}
+@page{size:A4;margin:20mm 18mm 18mm;}
+@page:first{margin:0;}
+
+/* ===== COVER (bold cookbook / magazine style) ===== */
+.cover{position:relative;height:297mm;width:100%;display:flex;flex-direction:column;
+   background:var(--brand-deep);color:#fff;overflow:hidden;page-break-after:always;}
+.cover-photo{position:relative;flex:1 1 auto;min-height:0;
+   background:url('images/cover.jpg') center 42%/cover no-repeat;}
+.cover-photo::after{content:'';position:absolute;inset:0;background:
+   linear-gradient(180deg, rgba(11,42,51,.48) 0%, rgba(11,42,51,0) 26%, rgba(11,42,51,0) 88%, rgba(11,42,51,.30) 100%);}
+.masthead{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;justify-content:space-between;
+   align-items:center;padding:22px 26px;}
+.masthead .brandmark{display:flex;align-items:center;gap:9px;font-family:var(--sans);font-weight:700;
+   font-size:12pt;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.35);}
+.masthead .brandmark .dot{width:11px;height:11px;border-radius:50%;background:var(--brand);
+   box-shadow:0 0 0 4px rgba(0,194,209,.4);}
+.masthead .tag{font-family:var(--sans);font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+   font-size:8pt;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);
+   padding:7px 14px;border-radius:30px;}
+.cover-panel{flex:0 0 auto;background:var(--brand-deep);padding:34px 24mm 30px;position:relative;}
+.cover-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;
+   background:linear-gradient(90deg,var(--brand) 0%, #17d6c6 45%, var(--accent) 100%);}
+.cover-panel .kicker{font-family:var(--sans);font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+   font-size:10pt;color:var(--brand);margin:0 0 12px;}
+.cover-panel h1{font-family:var(--display);font-weight:600;font-size:52pt;line-height:.98;margin:0;
+   letter-spacing:-.6px;color:#fff;}
+.cover-panel h1 em{font-style:italic;color:var(--brand);}
+.cover-panel .tagline{font-size:13.5pt;line-height:1.5;color:#CFE3E7;margin:18px 0 0;max-width:40ch;}
+.cover-panel .foot{display:flex;justify-content:space-between;align-items:center;margin-top:24px;
+   padding-top:16px;border-top:1px solid rgba(255,255,255,.16);font-size:9.5pt;color:#9FB6BC;}
+.cover-panel .foot b{color:#fff;font-weight:600;}
+
+/* ===== INTERIOR ===== */
+.page{padding-top:2mm;}
+.lead-block{border-left:4px solid var(--brand);padding:2px 0 2px 18px;margin:0 0 26px;}
+.lead-block .lk{font-family:var(--sans);font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+   font-size:9pt;color:var(--brand);}
+.lead{font-family:var(--display);font-size:16pt;line-height:1.45;color:var(--brand-deep);
+   font-weight:400;margin:8px 0 0;}
+
+/* table of contents */
+.toc-head{font-family:var(--display);font-weight:600;font-size:30pt;color:var(--brand-deep);margin:0 0 4px;}
+.toc-sub{color:var(--muted);font-size:11pt;margin:0 0 18px;}
+.toc .row{display:flex;gap:16px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line);}
+.toc .row .n{font-family:var(--display);font-weight:600;color:var(--brand);font-size:16pt;flex:0 0 30px;}
+.toc .row .t{font-weight:700;color:var(--brand-deep);font-size:12.5pt;}
+.toc .row .d{color:var(--muted);font-size:10pt;margin-top:3px;line-height:1.45;}
+
+/* chapter opener — flows continuously (no forced page break) so pages fill; opener stays together */
+.chapter{margin:42px 0 6px;break-inside:avoid;break-after:avoid;}
+.chapter:first-of-type{margin-top:8px;}
+.chapter .num{font-family:var(--display);font-size:13pt;font-weight:600;color:var(--brand);letter-spacing:.02em;}
+.chapter .num::before{content:'';display:inline-block;width:26px;height:2px;background:var(--accent);
+   vertical-align:middle;margin-right:10px;}
+h2{font-family:var(--display);font-weight:600;font-size:26pt;line-height:1.1;color:var(--brand-deep);
+   margin:6px 0 4px;letter-spacing:-.3px;}
+.chapter .sub{color:var(--muted);font-size:11pt;margin:2px 0 0;}
+.chapter-rule{height:1px;background:var(--line);margin:16px 0 22px;}
+
+h3{font-family:var(--sans);font-weight:700;font-size:13pt;color:var(--brand-deep);margin:22px 0 6px;break-after:avoid;}
+p{margin:0 0 12px;}
+strong{color:var(--brand-deep);font-weight:600;}
+a{color:var(--brand);text-decoration:none;font-weight:600;}
+.first > p:first-of-type::first-letter{font-family:var(--display);font-weight:600;font-size:44pt;
+   float:left;line-height:.82;padding:6px 12px 0 0;color:var(--brand);}
+
+/* lists */
+ul{list-style:none;padding:0;margin:0 0 14px;}
+ul li{position:relative;padding:0 0 0 26px;margin:8px 0;}
+ul li::before{content:'';position:absolute;left:4px;top:9px;width:8px;height:8px;border-radius:50%;
+   background:var(--brand);box-shadow:0 0 0 3px var(--tint);}
+ol{padding-left:22px;margin:0 0 14px;}
+ol li{margin:8px 0;padding-left:4px;}
+ol li::marker{color:var(--brand);font-weight:700;}
+
+/* callouts */
+.callout{border-radius:14px;padding:16px 18px 16px 20px;margin:20px 0;position:relative;
+   background:var(--tint);border:1px solid #CFF1F4;break-inside:avoid;}
+.callout .ct{font-family:var(--sans);font-weight:700;font-size:10.5pt;letter-spacing:.02em;
+   color:var(--brand-deep);margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.callout p{margin:0;font-size:10.8pt;color:#33474D;}
+.callout.warn{background:var(--tint-2);border-color:#FFE2B8;}
+.callout.warn .ct{color:#8A5A12;}
+
+.pullquote{font-family:var(--display);font-style:italic;font-weight:500;font-size:18pt;line-height:1.4;
+   color:var(--brand-deep);text-align:center;margin:26px 8mm;padding:0;break-inside:avoid;}
+.pullquote::before{content:'\201C';display:block;font-size:40pt;color:var(--brand);line-height:.2;margin-bottom:14px;}
+
+/* action step box */
+.action{border:1.5px solid var(--brand);border-radius:14px;padding:18px 20px;margin:22px 0;background:#fff;break-inside:avoid;}
+.action .at{font-family:var(--sans);font-weight:700;font-size:10pt;letter-spacing:.14em;
+   text-transform:uppercase;color:var(--brand);margin:0 0 10px;}
+.action .step{display:flex;gap:12px;align-items:flex-start;margin:9px 0;font-size:10.8pt;}
+.action .box{flex:0 0 18px;height:18px;border:1.8px solid var(--brand);border-radius:5px;margin-top:1px;}
+
+/* table */
+table{width:100%;border-collapse:separate;border-spacing:0;margin:18px 0;font-size:10.4pt;
+   border:1px solid var(--line);border-radius:12px;overflow:hidden;break-inside:avoid;}
+th{background:var(--brand-deep);color:#fff;text-align:left;padding:10px 13px;font-family:var(--sans);
+   font-weight:600;font-size:9.6pt;}
+td{padding:9px 13px;border-top:1px solid var(--line);vertical-align:top;}
+tr:nth-child(even) td{background:#F7FBFC;}
+td:first-child{font-weight:600;color:var(--brand-deep);}
+
+/* images */
+.chapter-banner{width:100%;height:44mm;object-fit:cover;border-radius:16px;display:block;
+   margin:16px 0 4px;box-shadow:0 12px 28px rgba(11,42,51,.16);}
+figure.fig{margin:22px 0;break-inside:avoid;}
+figure.fig img{width:100%;height:52mm;object-fit:cover;border-radius:14px;display:block;box-shadow:0 10px 24px rgba(11,42,51,.13);}
+figure.fig figcaption{font-family:var(--sans);font-size:9pt;color:var(--muted);font-style:italic;text-align:center;margin-top:9px;}
+</style></head><body>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <div class="cover-photo">
+    <div class="masthead">
+      <div class="brandmark"><span class="dot"></span> The Dinner Reset Kitchen</div>
+      <div class="tag">The Complete System</div>
+    </div>
+  </div>
+  <div class="cover-panel">
+    <div class="kicker">Meal Prep for Busy Parents</div>
+    <h1>Prep Once, <em>Eat All Week</em></h1>
+    <p class="tagline">The plan-shop-prep system that gets healthy dinners on the table every night — without living in your kitchen.</p>
+    <div class="foot"><div>A step-by-step guide</div><div><b>The Dinner Reset Kitchen</b></div></div>
+  </div>
+</div>
+
+<!-- ===== CONTENTS ===== -->
+<div class="page" style="page-break-after:always">
+  <div class="toc-head">What's Inside</div>
+  <p class="toc-sub">A complete system, start to finish — plus a done-for-you first week and a one-page cheat sheet.</p>
+  <div class="toc">
+    <div class="row"><div class="n">1</div><div><div class="t">The System, in Three Parts</div><div class="d">Plan, Shop, Prep — the whole method in one clear picture, and why it works when willpower doesn't.</div></div></div>
+    <div class="row"><div class="n">2</div><div><div class="t">Plan Your Rotating Menu</div><div class="d">Kill decision fatigue with anchor + flex nights — includes a 2-week starter menu you can use tonight.</div></div></div>
+    <div class="row"><div class="n">3</div><div><div class="t">Shop Once, Shop Smart</div><div class="d">One organized list, one trip — the store-zone method and the pantry staples that carry every meal.</div></div></div>
+    <div class="row"><div class="n">4</div><div><div class="t">The 90-Minute Prep Block</div><div class="d">The exact minute-by-minute sequence that turns one session into six calm dinners.</div></div></div>
+    <div class="row"><div class="n">5</div><div><div class="t">Assemble &amp; Keep It Fresh All Week</div><div class="d">Five-minute nightly assembly, storage times, and the fix for "sad Wednesday" leftovers.</div></div></div>
+    <div class="row"><div class="n">6</div><div><div class="t">Make It Stick (Troubleshoot &amp; Scale)</div><div class="d">Common pitfalls and fixes, scaling for bigger families and picky eaters, and freezer backups.</div></div></div>
+    <div class="row"><div class="n">★</div><div><div class="t">Bonus: Your Done-For-You First Week</div><div class="d">A complete week — menu, shopping list, and prep plan — so you can start without thinking.</div></div></div>
+    <div class="row"><div class="n">✦</div><div><div class="t">The One-Page Cheat Sheet</div><div class="d">The entire system on a single page. Print it, pin it, and you're set.</div></div></div>
+  </div>
+</div>
+
+<!-- ===== WELCOME ===== -->
+<div class="page first">
+  <div class="lead-block">
+    <div class="lk">Start Here</div>
+    <div class="lead">Six o'clock doesn't have to be the hardest hour of your day. By Sunday night, next week's dinners can already be handled.</div>
+  </div>
+  <p>If weeknight dinners have become a daily scramble — the fridge staring back at you, the kids asking "what's for dinner" before you've even taken your coat off — you're not disorganized, and you're not failing. You're just missing a <strong>system</strong>. That's the entire point of this guide.</p>
+  <p>Here's the honest truth most meal-prep advice misses: the problem was never that you don't know how to cook. It's that dinner asks you to make five separate decisions, five separate messes, and five separate shopping trips across the most tired hours of your week. This system moves all of that to one calm window — and lets the other six nights coast.</p>
+  <h3>What you'll be able to do by the end</h3>
+  <ul>
+    <li>Plan a full week of dinners in <strong>ten minutes</strong>, from a menu — never a blank page.</li>
+    <li>Do <strong>one organized shop</strong> instead of three frantic mid-week runs.</li>
+    <li>Turn a single <strong>90-minute prep block</strong> into five to six ready-to-assemble dinners.</li>
+    <li>Put a real, healthy dinner on the table on a weeknight in <strong>under ten minutes</strong>.</li>
+  </ul>
+  <div class="callout">
+    <div class="ct">💡 How to use this guide</div>
+    <p>Don't try to do everything at once. Read Chapter 1 for the big picture, then just do this Sunday's reset using Chapters 2–4. Each chapter ends with one small action — do that, and the system builds itself. By your second week, it runs on autopilot.</p>
+  </div>
+  <p>One more thing before we start: this is a <em>flexible</em> system, not a rigid diet. You keep your favorite meals, your family's tastes, your budget. We're just giving the chaos a container. Let's reset your kitchen.</p>
+</div>
+
+<!-- ===== CHAPTER 1 ===== -->
+<div class="chapter">
+  <div class="num">Chapter One</div>
+  <h2>The System, in Three Parts</h2>
+  <div class="sub">The whole method in one clear picture — Plan, Shop, Prep.</div>
+</div>
+<div class="chapter-rule"></div>
+<div class="first">
+<p>Strip away the noise and every stress-free kitchen runs on the same three moves, done together, once a week. We call it the <strong>Sunday Reset</strong> (it doesn't have to be Sunday — pick any 90-minute window). Here's the shape of it before we go deep on each part.</p>
+<h3>1 · Plan — decide once, not five times</h3>
+<p>You choose the week's dinners from a short rotating menu, so you never face a blank page at 5pm. Five decisions, made once, while you have the bandwidth to make them well.</p>
+<h3>2 · Shop — one list, one trip</h3>
+<p>A planned week becomes one organized shopping list, grouped by store section, knocked out in a single loop. No mid-week "we're out of everything" runs.</p>
+<h3>3 · Prep — build your components</h3>
+<p>Here's the move that makes the whole thing work: you don't cook five finished meals on Sunday. You prep <strong>components</strong> — roasted vegetables, cooked grains, portioned protein, a sauce or two — and assemble them fresh, in minutes, each night.</p>
+</div>
+<div class="pullquote">You're not cooking five dinners. You're running one prep session — the dinners just fall out of it.</div>
+<p>That single distinction is why this system lasts when others fizzle out by Wednesday. Fully-cooked make-ahead meals get soggy, tired, and boring after two days, so people quit. Components stay fresh, mix and match into different dinners, and take five minutes to plate. Variety without the daily work.</p>
+<div class="callout">
+  <div class="ct">🔑 The one idea to hold onto</div>
+  <p>Prep <strong>components</strong>, assemble <strong>meals</strong>. Everything in this guide is built on that. If you remember nothing else, remember that.</p>
+</div>
+<h3>Why it works when willpower doesn't</h3>
+<p>This isn't about being more disciplined. It works because it removes the three things that actually derail weeknight dinner:</p>
+<ul>
+  <li><strong>Decision fatigue</strong> — you've made a thousand small choices by 6pm; the menu makes this one for you.</li>
+  <li><strong>Task-switching</strong> — chopping, cooking, and cleaning five separate times is exhausting; batching does it once.</li>
+  <li><strong>The blank fridge</strong> — with prepped components waiting, "nothing to eat" simply stops happening.</li>
+</ul>
+<p>Do this for two weeks and it stops feeling like a project and starts feeling like just… how your kitchen works now. Let's build it, one part at a time.</p>
+
+<!-- ===== CHAPTER 2 ===== -->
+<div class="chapter">
+  <div class="num">Chapter Two</div>
+  <h2>Plan Your Rotating Menu</h2>
+  <div class="sub">Ten minutes that make the other six nights easy.</div>
+</div>
+<div class="chapter-rule"></div>
+<div class="first">
+<p>The fastest way to never get ahead of dinner is to decide it fresh, every single night. So we don't. We build a short <strong>rotating menu</strong> — a small set of meals you cycle through — and each week you just pick from it. No inspiration required.</p>
+<h3>Anchor nights and flex nights</h3>
+<p>Split your week into two kinds of nights and planning gets almost automatic:</p>
+<ul>
+  <li><strong>Anchor nights (3):</strong> meals you could make with your eyes closed — the reliable, everyone-eats-them dinners.</li>
+  <li><strong>Flex nights (2):</strong> one "clean out the fridge" night (use up what's left) and one easy, low-effort night (a sheet-pan meal, or takeout-style made at home).</li>
+</ul>
+<p>Three anchors plus two flex nights covers your work week, leaves the weekend open, and means you're really only ever choosing three real meals. That's the whole trick.</p>
+</div>
+<div class="callout warn">
+  <div class="ct">⚠️ The 30-minute rule</div>
+  <p>If a meal takes more than 30 minutes of active work on a weeknight, it doesn't belong on your rotation. Save the ambitious cooking for weekends. Weeknights are for <em>assembly</em>, not projects.</p>
+</div>
+<h3>A 2-week starter menu (steal this)</h3>
+<p>Not sure where to begin? Use this exact rotation for your first two weeks. Every meal is component-friendly and under 30 minutes to assemble.</p>
+<table>
+  <tr><th>Night</th><th>Week 1</th><th>Week 2</th></tr>
+  <tr><td>Monday</td><td>Chicken + roasted veg + rice bowls</td><td>Salmon + greens + brown rice</td></tr>
+  <tr><td>Tuesday</td><td>Beef &amp; veg stir-fry over noodles</td><td>Turkey taco bowls</td></tr>
+  <tr><td>Wednesday</td><td>Sheet-pan sausage &amp; potatoes <em>(flex)</em></td><td>Loaded baked-potato bar <em>(flex)</em></td></tr>
+  <tr><td>Thursday</td><td>Grain bowls, "clean the fridge" <em>(flex)</em></td><td>Big salad + protein, fridge cleanout <em>(flex)</em></td></tr>
+  <tr><td>Friday</td><td>Homemade flatbread pizzas</td><td>Rice &amp; beans burrito bowls</td></tr>
+</table>
+<h3>Build your own with one formula</h3>
+<p>Once you've run the starter menu, you'll want your own. Every balanced, prep-friendly dinner follows the same formula — just fill in the blanks:</p>
+<div class="callout">
+  <div class="ct">🧩 The mix-and-match formula</div>
+  <p><strong>Protein + Vegetable + Base + Sauce.</strong> Roast chicken + broccoli + rice + peanut sauce is a bowl. Swap the sauce to pesto and it's a different dinner. Prep the four parts separately and one batch becomes a week of variety.</p>
+</div>
+<div class="action">
+  <div class="at">Your action for Chapter 2</div>
+  <div class="step"><div class="box"></div><div>Write down your <strong>3 anchor meals</strong> — the ones your family always eats.</div></div>
+  <div class="step"><div class="box"></div><div>Pick <strong>2 flex nights</strong>: one fridge-cleanout, one low-effort.</div></div>
+  <div class="step"><div class="box"></div><div>That's your first week's menu. Done in ten minutes.</div></div>
+</div>
+
+<!-- ===== CHAPTER 3 ===== -->
+<div class="chapter">
+  <div class="num">Chapter Three</div>
+  <h2>Shop Once, Shop Smart</h2>
+  <div class="sub">One organized list, one calm trip — no mid-week runs.</div>
+</div>
+<div class="chapter-rule"></div>
+<div class="first">
+<p>A planned week has a hidden superpower: it turns your shopping into a single, organized trip. No wandering the aisles wondering what you need. No three separate "just grabbing a few things" runs that eat your evenings and your budget. One list, one loop, done.</p>
+<h3>Shop by store zone, not by meal</h3>
+<p>Here's the small shift that makes shopping fast: don't write your list meal-by-meal (you'll criss-cross the store ten times). Write it <strong>by store section</strong>, so you move through in one clean loop and never backtrack.</p>
+</div>
+<table>
+  <tr><th>Store zone</th><th>What you're grabbing</th></tr>
+  <tr><td>Produce</td><td>Prep-friendly veg — peppers, onions, broccoli, carrots, greens, anything roastable; plus fruit for the week</td></tr>
+  <tr><td>Proteins</td><td>Your 3 anchor proteins, bought in bulk and split at home into meal-sized portions</td></tr>
+  <tr><td>Grains &amp; base</td><td>Rice, quinoa, pasta, tortillas, potatoes — whatever your bowls sit on</td></tr>
+  <tr><td>Pantry &amp; sauce</td><td>The staples below, plus one or two sauces to keep meals interesting</td></tr>
+  <tr><td>Dairy &amp; frozen</td><td>Eggs, cheese, yogurt; frozen veg as a zero-waste backup</td></tr>
+</table>
+<h3>Buy proteins in bulk, split at home</h3>
+<p>Proteins are usually cheaper per pound in the larger pack. Buy the big pack, then portion it into meal-sized bags or containers the moment you get home. You save money <em>and</em> your prep-day self will thank you — half the portioning is already done.</p>
+<h3>The pantry staples that carry every meal</h3>
+<p>Keep these on hand and you can turn any prepped components into a finished, flavorful dinner without a special trip. This is your flavor insurance.</p>
+<table>
+  <tr><th>Category</th><th>Keep these stocked</th></tr>
+  <tr><td>Oils &amp; acids</td><td>Olive oil, a neutral oil, soy sauce, vinegar, lemons/limes</td></tr>
+  <tr><td>The 5 spices</td><td>Salt, pepper, garlic powder, paprika, cumin — these five cover most meals</td></tr>
+  <tr><td>Flavor boosters</td><td>Garlic, onion, a jar of pesto, a good hot sauce, honey</td></tr>
+  <tr><td>Shelf backups</td><td>Canned beans, canned tomatoes, broth, dried pasta, rice</td></tr>
+</table>
+<div class="callout warn">
+  <div class="ct">⚠️ Two shopping traps to avoid</div>
+  <p>Don't shop hungry (you'll buy for a week of imaginary ambitious dinners). And don't over-buy delicate produce you won't get to — buy what your plan actually uses, and lean on frozen veg for the rest. Waste is just money you prepped for the trash.</p>
+</div>
+<div class="action">
+  <div class="at">Your action for Chapter 3</div>
+  <div class="step"><div class="box"></div><div>Turn this week's menu into <strong>one list, grouped by the zones above.</strong></div></div>
+  <div class="step"><div class="box"></div><div>Check your pantry staples — add anything you're low on.</div></div>
+  <div class="step"><div class="box"></div><div>Do the single trip. Split your proteins as soon as you're home.</div></div>
+</div>
+
+<!-- ===== CHAPTER 4 ===== -->
+<div class="chapter">
+  <div class="num">Chapter Four</div>
+  <h2>The 90-Minute Prep Block</h2>
+  <div class="sub">One session in, six calm dinners out.</div>
+</div>
+<img class="chapter-banner" src="images/chapter-1.jpg" alt="">
+<div class="chapter-rule"></div>
+<div class="first">
+<p>This is the payoff block — the ninety minutes that buy back your whole week. The goal isn't to finish every meal; it's to get every <strong>component</strong> ready so weeknight dinner becomes assembly, not cooking. Here's exactly how to run it, in order, so nothing sits idle.</p>
+<h3>Work in this order — start the slow things first</h3>
+<p>The secret to a fast prep session is overlap: get the oven and stove working while you do the hands-on tasks. Follow this sequence and you're never waiting.</p>
+</div>
+<table>
+  <tr><th>Time</th><th>What you're doing</th></tr>
+  <tr><td>0–10 min</td><td>Preheat oven. Chop all vegetables for the week while it heats.</td></tr>
+  <tr><td>10–20 min</td><td>Two trays of veg into the oven to roast. Start a big pot of grains on the stove.</td></tr>
+  <tr><td>20–45 min</td><td>Cook your proteins (bake, pan-sear, or grill) while veg roasts and grains simmer.</td></tr>
+  <tr><td>45–60 min</td><td>Mix 1–2 sauces. Pull veg and grains; let everything cool a few minutes.</td></tr>
+  <tr><td>60–90 min</td><td>Portion components into containers. Label. Clean as you go. Done.</td></tr>
+</table>
+<h3>Prep components, not finished meals</h3>
+<p>Roast the vegetables, cook the grains, portion the protein, mix the sauces — and stop there. Keep them in <strong>separate</strong> containers, not pre-assembled plates. This is what keeps everything fresh and flexible: the same roasted veg becomes a rice bowl Monday and a salad topping Thursday.</p>
+<div class="callout">
+  <div class="ct">🔑 The component rule (again — it matters)</div>
+  <p>Store parts separately, combine fresh. A pre-plated meal is tired by day three. A container of roasted veg is still great on Friday — and it can become three different dinners.</p>
+</div>
+<h3>Store it so it lasts</h3>
+<ul>
+  <li><strong>Cool before you cover.</strong> Lidding hot food traps steam and turns everything soggy. Let it cool 10 minutes first.</li>
+  <li><strong>Airtight, always.</strong> Glass containers with sealing lids keep food fresh longest (and reheat cleanly).</li>
+  <li><strong>Label with the day you made it.</strong> A strip of tape and a marker. You'll never play "is this still good?" again.</li>
+</ul>
+<figure class="fig"><img src="images/figure-2.jpg" alt=""><figcaption>Cool, seal, and label — airtight glass containers keep everything fresh all week long.</figcaption></figure>
+<div class="action">
+  <div class="at">Your action for Chapter 4</div>
+  <div class="step"><div class="box"></div><div>Block <strong>90 minutes</strong> this week and treat it like an appointment.</div></div>
+  <div class="step"><div class="box"></div><div>Run the sequence above — slow things first, portion last.</div></div>
+  <div class="step"><div class="box"></div><div>Cool, seal, label. Then admire your fridge full of dinners.</div></div>
+</div>
+
+<!-- ===== CHAPTER 5 ===== -->
+<div class="chapter">
+  <div class="num">Chapter Five</div>
+  <h2>Assemble &amp; Keep It Fresh All Week</h2>
+  <div class="sub">Five-minute dinners — and how to keep them exciting to Friday.</div>
+</div>
+<div class="chapter-rule"></div>
+<div class="first">
+<p>This is where all that Sunday work pays off. On a weeknight, dinner is now a five-minute assembly job: grab your components, combine, warm, and add a fresh finishing touch. No cooking, no cleanup mountain, no 6pm panic.</p>
+<h3>The five-minute assembly</h3>
+<ol>
+  <li>Pull the components tonight's meal needs.</li>
+  <li>Warm what should be warm (protein, grains) — 60–90 seconds each.</li>
+  <li>Combine into a bowl or plate.</li>
+  <li>Finish fresh: a spoon of sauce, a squeeze of lemon, fresh herbs, a crunch on top.</li>
+</ol>
+<p>That last step is the whole difference between "leftovers" and "a meal." A fresh finish makes prepped food taste made-to-order.</p>
+</div>
+<figure class="fig">
+  <img src="images/figure-1.jpg" alt="">
+  <figcaption>Dinner in five minutes: warm your components, plate, and finish fresh with sauce, herbs, and a squeeze of lemon.</figcaption>
+</figure>
+<h3>How long each component keeps</h3>
+<p>Prep for the front half of the week, and freeze the back half if you're prepping a lot. Rough guide:</p>
+<table>
+  <tr><th>Component</th><th>Fridge</th><th>Reheat tip</th></tr>
+  <tr><td>Cooked grains</td><td>4–5 days</td><td>Splash of water, microwave 60s, fluff</td></tr>
+  <tr><td>Roasted vegetables</td><td>4–5 days</td><td>Best warmed in a hot pan to re-crisp</td></tr>
+  <tr><td>Cooked protein</td><td>3–4 days</td><td>Low and gentle so it doesn't dry out</td></tr>
+  <tr><td>Fresh greens / raw veg</td><td>5–6 days</td><td>Keep dry; add just before eating</td></tr>
+  <tr><td>Sauces &amp; dressings</td><td>5–7 days</td><td>Stir; add fresh for a flavor lift</td></tr>
+</table>
+<div class="callout">
+  <div class="ct">🍋 The "sad Wednesday" fix</div>
+  <p>If a component starts feeling a little tired mid-week, don't toss it — <strong>reset it</strong>. Fat, acid, salt, or freshness brings food back to life: a drizzle of good oil, a squeeze of citrus, a pinch of flaky salt, or a handful of fresh herbs. Ten seconds, totally different meal.</p>
+</div>
+<p>Prepping more than five days at a time? Freeze half your grains and protein in meal-sized portions right after prep. Thaw overnight in the fridge and they're as good as fresh.</p>
+
+<!-- ===== CHAPTER 6 ===== -->
+<div class="chapter">
+  <div class="num">Chapter Six</div>
+  <h2>Make It Stick</h2>
+  <div class="sub">Troubleshooting, scaling, and turning this into a habit that runs itself.</div>
+</div>
+<div class="chapter-rule"></div>
+<div class="first">
+<p>The people who keep this going aren't more disciplined than you — they've just smoothed out the few bumps that trip everyone up at the start. Here are the common ones and the quick fix for each, so nothing derails you.</p>
+</div>
+<table>
+  <tr><th>If this happens…</th><th>Do this</th></tr>
+  <tr><td>"I ran out of time on prep day"</td><td>Prep just grains + one protein + one veg. Even a half-reset beats none.</td></tr>
+  <tr><td>"We got bored of the food"</td><td>Change only the <strong>sauce</strong>. Same components, new flavor = a different week.</td></tr>
+  <tr><td>"Things went bad before we ate them"</td><td>Prep for 4 nights, not 7. Freeze the rest. Adjust to your real pace.</td></tr>
+  <tr><td>"The kids won't eat it"</td><td>Keep components separate on their plate (deconstructed) — kids love choosing.</td></tr>
+  <tr><td>"I forgot to plan"</td><td>Keep one no-plan backup (pasta + jarred sauce + frozen veg) always stocked.</td></tr>
+</table>
+<h3>Scaling for a bigger — or pickier — family</h3>
+<p>Feeding more people? Don't cook more <em>meals</em>, just prep bigger <strong>batches</strong> of the same components — the effort barely changes. For picky eaters, the component system is a secret weapon: everyone builds their own bowl from the same parts, so one prep session keeps the whole table happy without short-order cooking.</p>
+<div class="callout">
+  <div class="ct">❄️ Build a freezer safety net</div>
+  <p>Every few weeks, double one component and freeze the extra in meal-sized portions. Over a month you'll quietly build a stash of backup dinners — your insurance for the weeks life gets loud.</p>
+</div>
+<div class="pullquote">Give it two weeks. By the third, you won't be "meal prepping" — it'll just be how your kitchen works.</div>
+<div class="action">
+  <div class="at">Your action for Chapter 6</div>
+  <div class="step"><div class="box"></div><div>Put your 90-minute prep block on next week's calendar <strong>now.</strong></div></div>
+  <div class="step"><div class="box"></div><div>Stock your one no-plan backup meal so you're never stuck.</div></div>
+  <div class="step"><div class="box"></div><div>Run it two weeks before you judge it. That's when it clicks.</div></div>
+</div>
+
+<!-- ===== BONUS ===== -->
+<div class="chapter">
+  <div class="num">Bonus</div>
+  <h2>Your Done-For-You First Week</h2>
+  <div class="sub">No planning required — just follow this exactly.</div>
+</div>
+<div class="chapter-rule"></div>
+<div class="first">
+<p>Want to start without making a single decision? Use this. It's a complete, balanced week built entirely on this system — menu, shopping list, and prep plan. Follow it exactly your first week; make it your own from week two.</p>
+</div>
+<figure class="fig"><img src="images/figure-3.jpg" alt=""><figcaption>Monday night, done: chicken, roasted veg, and rice with peanut sauce — assembled in five minutes.</figcaption></figure>
+<h3>The menu</h3>
+<table>
+  <tr><th>Night</th><th>Dinner</th><th>Built from</th></tr>
+  <tr><td>Monday</td><td>Chicken &amp; roasted-veg rice bowls</td><td>Chicken · roasted veg · rice · peanut sauce</td></tr>
+  <tr><td>Tuesday</td><td>Beef &amp; broccoli over noodles</td><td>Beef · broccoli · noodles · soy-garlic sauce</td></tr>
+  <tr><td>Wednesday</td><td>Sheet-pan sausage &amp; potatoes <em>(flex)</em></td><td>Sausage · potatoes · peppers</td></tr>
+  <tr><td>Thursday</td><td>Big grain bowls, fridge cleanout <em>(flex)</em></td><td>Rice · any leftover veg &amp; protein · sauce</td></tr>
+  <tr><td>Friday</td><td>Flatbread pizzas</td><td>Flatbread · sauce · cheese · quick veg</td></tr>
+</table>
+<h3>The shopping list (by zone)</h3>
+<table>
+  <tr><th>Zone</th><th>Grab</th></tr>
+  <tr><td>Produce</td><td>Broccoli, bell peppers, onion, potatoes, a bag of greens, lemons, garlic</td></tr>
+  <tr><td>Proteins</td><td>Chicken breasts/thighs, lean ground beef, sausages</td></tr>
+  <tr><td>Grains &amp; base</td><td>Rice, noodles, flatbreads</td></tr>
+  <tr><td>Pantry &amp; sauce</td><td>Peanut butter, soy sauce, pizza/pasta sauce, olive oil, the 5 spices</td></tr>
+  <tr><td>Dairy</td><td>Shredded cheese</td></tr>
+</table>
+<h3>The 90-minute prep plan</h3>
+<ul>
+  <li><strong>Roast:</strong> two trays — broccoli on one, potatoes + peppers on the other.</li>
+  <li><strong>Grains:</strong> a big pot of rice; boil noodles just until al dente.</li>
+  <li><strong>Protein:</strong> bake the chicken; brown the beef; the sausages roast with the potatoes.</li>
+  <li><strong>Sauces:</strong> whisk a quick peanut sauce and a soy-garlic sauce.</li>
+  <li><strong>Portion &amp; label</strong> everything into separate containers. You're done — five dinners are now five minutes away each.</li>
+</ul>
+
+<!-- ===== CHEAT SHEET ===== -->
+<div class="chapter">
+  <div class="num">Keep This Page</div>
+  <h2>The One-Page Cheat Sheet</h2>
+  <div class="sub">The whole system at a glance. Print it. Pin it to the fridge.</div>
+</div>
+<div class="chapter-rule"></div>
+<div class="callout">
+  <div class="ct">🗺️ The system, in one breath</div>
+  <p><strong>PLAN</strong> (3 anchors + 2 flex nights) → <strong>SHOP</strong> (one list, by store zone) → <strong>PREP</strong> (90 minutes of components) → <strong>ASSEMBLE</strong> (5-minute nightly bowls with a fresh finish).</p>
+</div>
+<h3>The formula for any meal</h3>
+<p><strong>Protein + Vegetable + Base + Sauce.</strong> Change the sauce, change the meal.</p>
+<h3>The 90-minute order</h3>
+<ol>
+  <li>Preheat &amp; chop everything</li>
+  <li>Roast veg + start grains</li>
+  <li>Cook proteins</li>
+  <li>Mix sauces</li>
+  <li>Cool, portion, label</li>
+</ol>
+<h3>How long it keeps</h3>
+<table>
+  <tr><th>Component</th><th>Fridge</th></tr>
+  <tr><td>Grains &amp; roasted veg</td><td>4–5 days</td></tr>
+  <tr><td>Cooked protein</td><td>3–4 days</td></tr>
+  <tr><td>Greens &amp; sauces</td><td>5–7 days</td></tr>
+</table>
+<div class="callout warn">
+  <div class="ct">🍋 Remember the two rules</div>
+  <p>Prep <strong>components</strong>, not finished meals. And when something tastes tired, reset it with fat, acid, salt, or fresh herbs.</p>
+</div>
+
+<!-- ===== CLOSING ===== -->
+<div class="page">
+  <div class="lead-block">
+    <div class="lk">One Last Thing</div>
+    <div class="lead">You didn't just read about a calmer kitchen — you now have the exact system to build one. This week, run it once.</div>
+  </div>
+  <p>The first Sunday is the only hard one. After that, the momentum carries it. You'll shop faster, cook less, waste less, and — the part that surprised us most — actually <em>enjoy</em> dinner again, because the frantic part is gone.</p>
+  <p>Keep this guide handy, keep that cheat sheet on the fridge, and give yourself two weeks before you decide how it fits your life. You've got this. 💛</p>
+  <p style="margin-top:24px;color:var(--muted);font-size:10pt;">The Dinner Reset Kitchen · <em>Prep Once, Eat All Week</em></p>
+</div>
+
+</body></html>

@@ -1,0 +1,62 @@
+﻿AI Freedom Machine - Auto-Pilot Edition
+=======================================
+
+Welcome! Everything you need is in this folder. Start here, then follow the guide.
+
+
+FIRST - a word about the files you can see
+------------------------------------------
+Some of these look technical. You do NOT need to open, edit, or understand any of them:
+
+  system            <- your automation engine. Your assistant uses it. Leave it alone.
+  .env.template     <- a blank form for your own passwords, filled in later WITH you.
+  .claude           <- your 14 specialists, already installed. You may not even see this
+                       folder; that's normal, it's hidden by default.
+
+Nothing here is broken and nothing is missing. You only ever touch the two PDFs.
+
+
+STEP 1 - Read the guide
+-----------------------
+Open "AI Freedom Machine - Auto-Pilot - Getting Started.pdf".
+
+It walks you through the setup click by click: creating your Claude account, installing the
+free engine (Node.js), installing your assistant, and opening it inside this folder.
+
+Give it 15-20 minutes for the first run. It is more involved than the desktop version -
+that's the honest trade for something that afterwards runs without you. None of it needs
+tech skills, and every step is spelled out.
+
+  (The other PDF - "What It Can Do" - lists every capability, every command, and every
+   automation that will run for you. Read that AFTER you're set up. It's a map, not
+   homework.)
+
+
+STEP 2 - Say hello
+------------------
+With your assistant open in this folder, type:
+
+    let's get started
+
+It will ask what hours your computer is usually on, then take it from there.
+
+
+IF ANYTHING GOES SIDEWAYS
+-------------------------
+Three fixes cover almost every install snag, and all three take under a minute:
+
+  "node is not recognized"     -> close and reopen your command window
+  "npm install failed"         -> make sure you're inside this folder, then run it again
+  "claude command not found"   -> run the install line once more, then reopen the window
+
+Still stuck? Two options, in this order:
+  1. Search the Help Vault:  helpvault.theaifreedommachine.com
+  2. Reply to your welcome email. It comes straight to me and I answer personally,
+     usually within one business day. Send a screenshot if it's easier.
+
+Please don't try to do all of this tonight. The people who get stuck are almost always the
+ones who sat down determined to finish in one sitting, hit a snag at 11pm, and closed the
+laptop. One step at a time is genuinely faster.
+
+- Ash
+  Founder, AI Systems Method

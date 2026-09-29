@@ -1,0 +1,29 @@
+{
+  "name": "ai-business-builder-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Automated runtime: sale watcher, product delivery, Telegram reports, content render + auto-post, scheduler.",
+  "scripts": {
+    "check-stripe": "node check-stripe.js",
+    "test-telegram": "node test-telegram.js",
+    "check-sales": "node check-sales.js",
+    "weekly-digest": "node weekly-digest.js",
+    "auto-content": "node auto-content.js",
+    "render-content": "node render-content.js",
+    "render-reels": "node render-reels.js",
+    "social-post": "node social-post.js",
+    "ads-check": "node meta-ads.js check",
+    "ads-monitor": "node meta-ads.js monitor",
+    "content-research": "node content-research.js",
+    "finance-report": "node finance-report.js"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "nodemailer": "^8.0.11",
+    "puppeteer": "^24.0.0"
+  },
+  "optionalDependencies": {
+    "imapflow": "^1.0.164"
+  }
+}
