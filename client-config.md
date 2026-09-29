@@ -53,3 +53,7 @@ Mode: Automated (Claude Code)
 - Logo: none. Owner has an unloved ChatGPT-made one; use text wordmark "Grit & Bloom" for now.
 - Preview: Product/brand-preview.png
 - Affiliate links: owner may have some; collect later (affiliate-links.md not created yet). Shortlist: product platform (Payhip/Stan/Systeme), email tool (Kit/MailerLite), Canva, Skool.
+
+## Progress
+- Product 1 BUILT (draft v1): Product/Scrolling-to-Selling.pdf (~17 pages). Source: Product/body.html + Product/Scrolling-to-Selling.html. Awaiting owner review. Fonts fall back to Georgia/system in this sandbox (no web-font access); use Fraunces+Inter when re-rendered with internet. No stock photos yet.
+- Placeholder in Chapter 6: Setup Kit link "coming soon". Affiliate links still to collect.
