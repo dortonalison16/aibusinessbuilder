@@ -48,7 +48,7 @@ Mode: Automated (Claude Code)
 
 ## Brand & Look (draft, owner wants to review then maybe change)
 - Feeling: grounded and feminine (D), earthy, a little "bloom"
-- Palette: forest green #2F4A3A, deep green #1F3327, blush pink #E8B4B8, soft cream #F7EFE8
+- Palette (v2, sage + softer blush): sage #6F8266, deep sage #56684F, soft blush #F6DCD8, cream #F7EFE8
 - Fonts: elegant serif titles (Fraunces) + clean sans body (Inter)
 - Logo: none. Owner has an unloved ChatGPT-made one; use text wordmark "Grit & Bloom" for now.
 - Preview: Product/brand-preview.png
