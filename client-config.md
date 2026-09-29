@@ -57,3 +57,5 @@ Mode: Automated (Claude Code)
 ## Progress
 - Product 1 BUILT (draft v1): Product/Scrolling-to-Selling.pdf (~17 pages). Source: Product/body.html + Product/Scrolling-to-Selling.html. Awaiting owner review. Fonts fall back to Georgia/system in this sandbox (no web-font access); use Fraunces+Inter when re-rendered with internet. No stock photos yet.
 - Placeholder in Chapter 6: Setup Kit link "coming soon". Affiliate links still to collect.
+- Affiliate links collected (see affiliate-links.md): Skool, Systeme.io, Stan Store. Still needed: email tool, design tool (e.g. Canva), scheduler.
+- Product 1 v2: fixed cover, page breaks (each chapter on new page), real fonts embedded (Product/fonts). 17 pages.

@@ -1,6 +1,13 @@
 <!doctype html><html><head><meta charset="utf-8"><title>Scrolling to Selling</title><style>
+@font-face{font-family:'Fraunces';font-weight:400;font-style:normal;src:url('fonts/fraunces-latin-400-normal.woff2') format('woff2');}
+@font-face{font-family:'Fraunces';font-weight:400;font-style:italic;src:url('fonts/fraunces-latin-400-italic.woff2') format('woff2');}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;src:url('fonts/fraunces-latin-600-normal.woff2') format('woff2');}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:italic;src:url('fonts/fraunces-latin-600-italic.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-weight:400;font-style:normal;src:url('fonts/inter-latin-400-normal.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-weight:600;font-style:normal;src:url('fonts/inter-latin-600-normal.woff2') format('woff2');}
+@font-face{font-family:'Inter';font-weight:700;font-style:normal;src:url('fonts/inter-latin-700-normal.woff2') format('woff2');}
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
 
 /* ===== BRAND TOKENS (the only thing that changes per buyer) ===== */
 :root{
@@ -129,25 +136,66 @@ figure.fig figcaption{font-family:var(--sans);font-size:9pt;color:var(--muted);f
 .masthead .brandmark .dot{background:var(--accent)!important;box-shadow:0 0 0 4px rgba(240,196,190,.4)!important;}
 .fine{font-size:9pt;color:var(--muted);}
 .sheet{break-before:page;}
+
+/* v2 layout fixes */
+.chapter{break-before:page;margin-top:0!important;}
+.page.first{break-before:page;}
+table{break-inside:auto!important;}
+tr{break-inside:avoid;}
+th{break-inside:avoid;}
+h3{break-after:avoid;}
+h3+p,h3+ul,h3+ol,h3+table{break-before:avoid;}
+.callout,.action,.pullquote{break-inside:avoid;}
+p{orphans:3;widows:3;}
+.sheet{break-before:page;}
+.cover{display:block!important;position:relative;height:297mm;background:linear-gradient(160deg,#8A9C80 0%,#6F8266 55%,#56684F 100%)!important;}
+.cover::before{content:'';position:absolute;right:-70mm;bottom:-40mm;width:170mm;height:170mm;border-radius:50%;background:rgba(246,220,216,.30);}
+.cover .masthead{position:absolute;top:0;left:0;right:0;padding:22mm 22mm 0;}
+.cover .cover-title{position:absolute;left:22mm;right:22mm;top:78mm;z-index:2;}
+.cover .kicker{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:10.5pt;color:#F6DCD8;margin:0 0 16px;}
+.cover h1{font-family:var(--display);font-weight:600;font-size:62pt;line-height:1;margin:0;color:#fff;letter-spacing:-.6px;}
+.cover h1 em{font-style:italic;color:#F6DCD8;}
+.cover .rule{width:70px;height:4px;background:#F6DCD8;margin:26px 0;border-radius:2px;}
+.cover .tagline{font-size:15pt;line-height:1.55;color:#F4F7F1;max-width:42ch;margin:0;}
+.cover .foot{position:absolute;left:22mm;right:22mm;bottom:20mm;z-index:2;display:flex;justify-content:space-between;color:#F4F7F1;font-size:10pt;border-top:1px solid rgba(255,255,255,.35);padding-top:14px;}
+.cover .foot b{color:#fff;}
+/* v3 tighter fit */
+body{font-size:10.5pt;line-height:1.55;}
+@page{size:A4;margin:16mm 16mm 15mm;}
+@page:first{margin:0;}
+p{margin:0 0 9px;}
+h3{margin:16px 0 5px;font-size:12pt;}
+ul li{margin:5px 0;}ol li{margin:5px 0;}
+table{font-size:9.6pt;margin:12px 0;}
+td{padding:7px 11px;}th{padding:8px 11px;}
+.callout{margin:14px 0;padding:13px 16px 13px 18px;}
+.action{margin:16px 0;padding:14px 18px;}
+.action .step{margin:6px 0;}
+.pullquote{page-break-inside:avoid;break-inside:avoid;margin:16px 8mm;font-size:16pt;}
+.pullquote::before{line-height:.6;height:22px;margin-bottom:6px;}
+.chapter-rule{margin:12px 0 16px;}
+h2{font-size:24pt;}
+.lead{font-size:14.5pt;}
+/* v4 polish */
+.pullquote::before{content:'\201C';display:inline;font-size:inherit;line-height:inherit;height:auto;margin:0;color:var(--brand);}
+.pullquote::after{content:'\201D';color:var(--brand);}
+table{break-inside:avoid!important;}
+.brk{break-before:page;}
 </style></head><body>
 <!-- ===== COVER ===== -->
 <div class="cover">
-  <div class="cover-photo">
-    <div class="masthead">
-      <div class="brandmark"><span class="dot"></span> Grit &amp; Bloom</div>
-      <div class="tag">Start Here Guide</div>
-    </div>
-  </div>
-  <div class="cover-panel">
+  <div class="masthead"><div class="brandmark"><span class="dot"></span> Grit &amp; Bloom</div><div class="tag">Start Here Guide</div></div>
+  <div class="cover-title">
     <div class="kicker">For moms who want out of the 9–5</div>
-    <h1>Scrolling to <em>Selling</em></h1>
+    <h1>Scrolling<br>to <em>Selling</em></h1>
+    <div class="rule"></div>
     <p class="tagline">Turn what you already know into your first digital product, and sell it with simple content, without ever showing your face.</p>
-    <div class="foot"><div>A step-by-step guide</div><div><b>Grit &amp; Bloom</b></div></div>
   </div>
+  <div class="foot"><div>A step-by-step guide</div><div><b>Grit &amp; Bloom</b></div></div>
 </div>
 
 <!-- ===== CONTENTS ===== -->
-<div class="page" style="page-break-after:always">
+<div class="page" style="break-before:page">
   <div class="toc-head">What's Inside</div>
   <p class="toc-sub">One clear path from "I don't know what I'd sell" to a live product and a plan to get it seen.</p>
   <div class="toc">
@@ -173,7 +221,7 @@ figure.fig figcaption{font-family:var(--sans);font-size:9pt;color:var(--muted);f
   <p>She's telling you this for one reason: <strong>you don't need a degree, a big following, or a perfect plan to start.</strong> You need a clear next step. That's what this guide is.</p>
   <h3>Who this is for</h3>
   <p>This guide is written for the mom who's working a 9–5, or trying to, and wants income she controls so she can be home more. If you've ever thought "I'd love to leave, but I can't just quit, and I don't even know what I'd sell," you're exactly who this was made for.</p>
-  <h3>What you'll be able to do by the end</h3>
+  <h3 class="brk">What you'll be able to do by the end</h3>
   <ul>
     <li>Pull together <strong>what you already know</strong> and see what's worth packaging.</li>
     <li>Choose <strong>one simple digital product</strong> and write the promise that makes people want it.</li>
@@ -434,13 +482,14 @@ figure.fig figcaption{font-family:var(--sans);font-size:9pt;color:var(--muted);f
 <h3>Where it fits</h3>
 <p>Your audience is already learning to build a small online business. That means they'll need tools, and you're using some of them already. Recommending tools you genuinely use is natural, helpful and honest.</p>
 <table>
-  <tr><th>What they need</th><th>Kinds of tools people recommend</th></tr>
-  <tr><td>Selling their product</td><td>A beginner-friendly selling platform</td></tr>
-  <tr><td>Building an email list</td><td>An email marketing tool</td></tr>
-  <tr><td>Designing content</td><td>A graphic and video design tool</td></tr>
-  <tr><td>Scheduling posts</td><td>A social media scheduler</td></tr>
-  <tr><td>Building a community</td><td>A community platform</td></tr>
+  <tr><th>What they need</th><th>Tool</th><th>What it's good for</th></tr>
+  <tr><td>Selling and delivering your product</td><td><a href="https://systeme.io/?sa=sa0271433220b1962e41b265ab9c9cf19b2326dd14">Systeme.io</a></td><td>Sales page, checkout, automatic delivery and email in one place</td></tr>
+  <tr><td>Link-in-bio store</td><td><a href="https://join.stan.store/debtfreewithali">Stan Store</a></td><td>One simple link that sends your content audience to your product</td></tr>
+  <tr><td>Building a community</td><td><a href="https://www.skool.com/signup?ref=3605e27ae1a44e27a1244dbcff569f3e">Skool</a></td><td>A home for your people, with classes and discussions</td></tr>
+  <tr><td>Designing content</td><td>Your favorite design tool</td><td>Graphics, carousels and simple video</td></tr>
+  <tr><td>Scheduling posts</td><td>Your favorite scheduler</td><td>Batch your week in one sitting</td></tr>
 </table>
+<p class="fine"><strong>Disclosure:</strong> some links in this guide are affiliate links. If you sign up through them, Grit &amp; Bloom may earn a commission at no extra cost to you. We only recommend tools we would use ourselves.</p>
 <h3>The four rules</h3>
 <ol>
   <li><strong>Only recommend what you truly use.</strong> If you wouldn't tell a friend, don't post it.</li>
