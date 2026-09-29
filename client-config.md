@@ -52,3 +52,4 @@ Mode: Automated (Claude Code)
 - Fonts: elegant serif titles (Fraunces) + clean sans body (Inter)
 - Logo: none. Owner has an unloved ChatGPT-made one; use text wordmark "Grit & Bloom" for now.
 - Preview: Product/brand-preview.png
+- Affiliate links: owner may have some; collect later (affiliate-links.md not created yet). Shortlist: product platform (Payhip/Stan/Systeme), email tool (Kit/MailerLite), Canva, Skool.
