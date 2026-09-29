@@ -41,6 +41,7 @@ Mode: Automated (Claude Code)
 ## Product 1 (in build)
 - Name: Scrolling to Selling (confirmed)
 - Correction: owner is currently Director of Operations at a multimillion-dollar online company (not only past roles); ran client success for online offers.
-- One-liner: Helps moms stuck in a 9-5 go from scrolling their phone to earning first online income with content and affiliate marketing, without showing their face.
+- One-liner (updated): Turn what you already know into your first digital product, and use simple faceless content to sell it, without showing your face.
+- DECISION: Scrolling to Selling reshaped (option B). Affiliate links only as a small side chapter. Chapters: 1 find what you can package; 2 choose/build first product; 3 page, checkout, delivery; 4 faceless content that sells; 5 affiliate links as side income; 6 next step: Setup Kit.
 - Price: ~$37 (test $27-47)
 - Kit vision (Product #2/core): user "brain dumps" background and knowledge, and the tool helps repackage it into an offer OR create their own digital products. Must be easier to set up than the kit the owner bought.
