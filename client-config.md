@@ -32,3 +32,8 @@ Mode: Automated (Claude Code)
 - Phase 1: faceless digital product ladder (entry ~$27 + bump + upsell), auto-delivered, Meta ads
 - Phase 2: faceless membership ($47-97/mo) with guest experts. Phase 3: sprint, then DFY with a hired closer.
 - Next step: guided-setup to build the first product
+
+## Story / Voice
+- Voice: warm but practical and no-nonsense (D). Faceless brand; story told as "the founder", never named.
+- Background (usable anonymously): mom of 5; teen mom, no college degree; 4+ years in online business; worked inside ops teams of several well-known multimillion-dollar online companies fixing/streamlining client experience and client success; helped 1000+ business owners build businesses; started as a $19/hr work-from-home healthcare insurance-authorization job that was micromanaged (a "ding" if idle 5 min); took an Airbnb course, built her own Airbnb, was offered a CSM role, built client experience/success for that company and a second offer; now earns more than she thought possible.
+- Private (do NOT put in public copy unless owner says so): earlier difficult marriage with no financial access, which started her love of side hustles.
