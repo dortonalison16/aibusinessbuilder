@@ -4,3 +4,5 @@
 - Stan Store (link-in-bio store) — https://join.stan.store/debtfreewithali
 - Note: the Stan link contains a personal handle ("debtfreewithali"). Fine while hidden behind link text; consider a branded redirect/short link for a fully faceless brand.
 - Still needed: email tool, design tool (e.g. Canva), scheduler. Not collected yet.
+- Metricool (scheduler) — https://i.mtr.cool/scrollingtoselling
+- Canva: no affiliate link available.
